@@ -49,14 +49,13 @@ model EComerceUser {
   products          Products[]
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
-  Review            Review[]
+  reviews           Review[]
 }
 
 model Cart {
   id        String       @id @default(auto()) @map("_id") @db.ObjectId
   userId    String       @db.ObjectId
   user      EComerceUser @relation(fields: [userId], references: [id])
-  // Other fields
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
 
@@ -105,33 +104,48 @@ model Address {
 }
 
 model Products {
-  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  id          String           @id @default(auto()) @map("_id") @db.ObjectId
   title       String
   description String
   images      String[]
   mainImage   String?
-  stock       Int
-  price       Float
-  sellerId    String       @db.ObjectId
-  user        EComerceUser @relation(fields: [sellerId], references: [id], onDelete: Cascade)
-  gender      Gender       @default(MALE)
   category    String?
-  orderItems  OrderItem[]
+  gender      Gender           @default(MALE)
+  variants    ProductVariant[]
   reviews     Review[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  orderItems     OrderItem[]
+  EComerceUser   EComerceUser? @relation(fields: [eComerceUserId], references: [id])
+  eComerceUserId String?       @db.ObjectId
+}
+
+model ProductVariant {
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  productId String      @db.ObjectId
+  product   Products    @relation(fields: [productId], references: [id])
+  size      String?
+  color     String?
+  stock     Int
+  price     Float
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  OrderItem OrderItem[]
 }
 
 model OrderItem {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  orderId   String   @db.ObjectId
-  order     Orders   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  productId String   @db.ObjectId
-  product   Products @relation(fields: [productId], references: [id])
-  quantity  Int
-  price     Float
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String         @id @default(auto()) @map("_id") @db.ObjectId
+  orderId    String         @db.ObjectId
+  order      Orders         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variantId  String         @db.ObjectId
+  variant    ProductVariant @relation(fields: [variantId], references: [id])
+  quantity   Int
+  price      Float
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  Products   Products?      @relation(fields: [productsId], references: [id])
+  productsId String?        @db.ObjectId
 }
 
 model Review {
