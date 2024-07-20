@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CUSTOMER
+  SELLER
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum AddressType {
+  HOME
+  WORK
+  OTHER
+}
+
+enum OrderStatus {
+  PENDING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model EComerceUser {
+  id                String     @id @default(auto()) @map("_id") @db.ObjectId
+  name              String
+  password          String
+  picture           String?
+  role              Role       @default(CUSTOMER)
+  favoritesProducts String[]
+  cart              Cart[]
+  orders            Orders[]
+  address           Address[]
+  products          Products[]
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  Review            Review[]
+}
+
+model Cart {
+  id        String       @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String       @db.ObjectId
+  user      EComerceUser @relation(fields: [userId], references: [id])
+  // Other fields
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@index([userId])
+}
+
+model Orders {
+  id                String        @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String        @db.ObjectId
+  user              EComerceUser  @relation(fields: [userId], references: [id])
+  paymentStatus     PaymentStatus @default(PENDING)
+  orderStatus       OrderStatus   @default(PENDING)
+  orderDate         DateTime      @default(now())
+  totalAmount       Float
+  shippingAddressId String?       @db.ObjectId
+  shippingAddress   Address?      @relation(fields: [shippingAddressId], references: [id])
+  orderItems        OrderItem[]
+  trackingNumber    String?
+  paymentMethod     String?
+  transactionId     String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@index([userId])
+}
+
+model Address {
+  id              String       @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String       @db.ObjectId
+  user            EComerceUser @relation(fields: [userId], references: [id])
+  street          String
+  city            String
+  state           String
+  postalCode      String
+  country         String
+  phoneNumber     String
+  houseNumber     String
+  addressType     AddressType
+  apartmentNumber String?
+  additionalInfo  String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  orders          Orders[]
+
+  @@index([userId])
+}
+
+model Products {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  images      String[]
+  mainImage   String?
+  stock       Int
+  price       Float
+  sellerId    String       @db.ObjectId
+  user        EComerceUser @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  gender      Gender       @default(MALE)
+  category    String?
+  orderItems  OrderItem[]
+  reviews     Review[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model OrderItem {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId   String   @db.ObjectId
+  order     Orders   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String   @db.ObjectId
+  product   Products @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Review {
+  id        String       @id @default(auto()) @map("_id") @db.ObjectId
+  productId String       @db.ObjectId
+  product   Products     @relation(fields: [productId], references: [id])
+  userId    String       @db.ObjectId
+  user      EComerceUser @relation(fields: [userId], references: [id])
+  rating    Int
+  comment   String?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
