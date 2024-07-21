@@ -44,7 +44,8 @@ model EComerceUser {
   password          String
   picture           String?
   role              Role       @default(CUSTOMER)
-  favoritesProducts String[]
+  favoritesProducts String[]   @db.ObjectId
+  wishList String[]   @db.ObjectId
   cart              Cart[]
   orders            Orders[]
   address           Address[]
