@@ -15,6 +15,7 @@ enum Role {
 enum Gender {
   MALE
   FEMALE
+  UNISEX
 }
 
 enum PaymentStatus {
@@ -39,6 +40,7 @@ enum OrderStatus {
 model EComerceUser {
   id                String     @id @default(auto()) @map("_id") @db.ObjectId
   name              String
+  gender            Gender?
   password          String
   picture           String?
   role              Role       @default(CUSTOMER)
@@ -110,7 +112,7 @@ model Products {
   images      String[]
   mainImage   String?
   category    String?
-  gender      Gender           @default(MALE)
+  gender      Gender?
   variants    ProductVariant[]
   reviews     Review[]
   createdAt   DateTime         @default(now())
