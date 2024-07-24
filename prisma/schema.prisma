@@ -45,7 +45,7 @@ model EComerceUser {
   picture           String?
   role              Role       @default(CUSTOMER)
   favoritesProducts String[]   @db.ObjectId
-  wishList String[]   @db.ObjectId
+  wishList          String[]   @db.ObjectId
   cart              Cart[]
   orders            Orders[]
   address           Address[]
@@ -107,48 +107,64 @@ model Address {
 }
 
 model Products {
-  id          String           @id @default(auto()) @map("_id") @db.ObjectId
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   title       String
   description String
   images      String[]
   mainImage   String?
   category    String?
   gender      Gender?
-  variants    ProductVariant[]
   reviews     Review[]
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  orderItems     OrderItem[]
-  EComerceUser   EComerceUser? @relation(fields: [eComerceUserId], references: [id])
-  eComerceUserId String?       @db.ObjectId
+  // Relacionamentos
+  variants       ProductVariant[]
+  EComerceUser   EComerceUser?    @relation(fields: [eComerceUserId], references: [id])
+  eComerceUserId String?          @db.ObjectId
+}
+
+model Color {
+  id       String           @id @default(auto()) @map("_id") @db.ObjectId
+  name     String           @unique
+  // Relacionamentos
+  variants ProductVariant[]
+}
+
+model Size {
+  id       String           @id @default(auto()) @map("_id") @db.ObjectId
+  name     String           @unique
+  // Relacionamentos
+  variants ProductVariant[]
 }
 
 model ProductVariant {
   id        String      @id @default(auto()) @map("_id") @db.ObjectId
-  productId String      @db.ObjectId
-  product   Products    @relation(fields: [productId], references: [id])
-  size      String?
-  color     String?
-  stock     Int
-  price     Float
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
   OrderItem OrderItem[]
+  stock     Int
+
+  productId String @db.ObjectId
+  colorId   String @db.ObjectId
+  sizeId    String @db.ObjectId
+
+  product Products @relation(fields: [productId], references: [id])
+  color   Color    @relation(fields: [colorId], references: [id])
+  size    Size     @relation(fields: [sizeId], references: [id])
+
+  // Indexes
+  @@index([productId, colorId, sizeId], name: "product_variant_index")
 }
 
 model OrderItem {
-  id         String         @id @default(auto()) @map("_id") @db.ObjectId
-  orderId    String         @db.ObjectId
-  order      Orders         @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  variantId  String         @db.ObjectId
-  variant    ProductVariant @relation(fields: [variantId], references: [id])
-  quantity   Int
-  price      Float
-  createdAt  DateTime       @default(now())
-  updatedAt  DateTime       @updatedAt
-  Products   Products?      @relation(fields: [productsId], references: [id])
-  productsId String?        @db.ObjectId
+  id        String         @id @default(auto()) @map("_id") @db.ObjectId
+  orderId   String         @db.ObjectId
+  order     Orders         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variantId String         @db.ObjectId
+  variant   ProductVariant @relation(fields: [variantId], references: [id])
+  quantity  Int
+  price     Float
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 }
 
 model Review {
