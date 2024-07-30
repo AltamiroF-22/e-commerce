@@ -24,7 +24,7 @@ const Input: React.FC<InputProps> = ({
   const errorMessage = errors[id]?.message as string | undefined;
 
   return (
-    <div className="sm:col-span-4">
+    <div className="mb-2">
       <label
         htmlFor={id}
         className="block text-sm font-medium leading-6 text-gray-900"

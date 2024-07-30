@@ -39,7 +39,8 @@ enum OrderStatus {
 
 model EComerceUser {
   id                String     @id @default(auto()) @map("_id") @db.ObjectId
-  name              String
+  name              String?
+  email             String    @unique
   gender            Gender?
   password          String
   picture           String?
