@@ -1,17 +1,32 @@
 "use client";
 
-import Image from "next/image";
-import ColorPickerComponent from "./components/inputs/....";
-import Input from "./components/inputs/Input";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import getCurrentUser from "./actions/getCurrentUser";
+import Container from "./components/Container";
+import UseLoginModal from "./hooks/useLogingModal";
 
-export default async function Home() {
-  // const currentUser = await getCurrentUser();
+export default function Home() {
+  const loginModal = UseLoginModal();
 
+  const handleLoginModal = () => {
+    loginModal.onOpen();
+  };
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      {/* <h1>{currentUser?.name}</h1> */}
-    </main>
+    <Container>
+      <nav className="flex justify-between items-center p-5 px-20 border-b">
+        <ul className="flex gap-3">
+          <li>products</li>
+          <li>products</li>
+          <li>products</li>
+        </ul>
+
+        <div className="">logo</div>
+
+        <button
+          className=" bg-slate-950 text-white py-2 px-8 rounded-full"
+          onClick={handleLoginModal}
+        >
+          Login
+        </button>
+      </nav>
+    </Container>
   );
 }
