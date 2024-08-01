@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
+import Button from "../Button";
 
 interface ModalProps {
   isOpen?: boolean;
@@ -65,12 +66,7 @@ const Modal: React.FC<ModalProps> = ({
               {/* Body */}
               <div className="relative p-5 flex-auto">{body}</div>
               <div className=" flex flex-row items-center gap-4 w-full">
-                <button
-                  className="w-full m-4 rounded-md text-center py-3 bg-sky-600 text-white transition hover:opacity-85"
-                  onClick={handleSubmit}
-                >
-                  {buttonLabel}
-                </button>
+               <Button label="Submit" onClick={handleSubmit}/>
               </div>
             </div>
           </div>
