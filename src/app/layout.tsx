@@ -4,6 +4,8 @@ import "./globals.css";
 
 import ToastProvider from "./providers/ToastProvider";
 import LoginModal from "./components/modals/LoginModal";
+import CreateModal from "./components/modals/CreateModal";
+
 import getCurrentUser from "./actions/getCurrentUser";
 import Navbar from "./components/navbar/Navbar";
 
@@ -26,9 +28,10 @@ export default async function RootLayout({
     <html lang="en">
       <body className={font.className}>
         <ToastProvider />
-        <Navbar currentUser={currentUser}/>
+        <Navbar currentUser={currentUser} />
 
         <LoginModal />
+        <CreateModal />
 
         <div className="pb-28 pt-28">{children}</div>
       </body>
