@@ -1,21 +1,20 @@
 "use client";
 
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import axios from "axios";
 import Input from "../inputs/Input";
 import Modal from "./Modal";
-import { signIn } from "next-auth/react";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
-import { redirect } from "next/dist/server/api-utils";
-import { useRouter } from "next/navigation";
+
 import UseCreateModal from "@/app/hooks/useCreateModal";
-import axios from "axios";
 import UseLoginModal from "@/app/hooks/useLogingModal";
+import { useState } from "react";
 
 const CreateModal = () => {
   const createModal = UseCreateModal();
   const loginModal = UseLoginModal();
 
-  const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const {
     register,
@@ -29,6 +28,7 @@ const CreateModal = () => {
   });
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
+    setIsLoading(true);
     axios
       .post("api/register", data)
       .then(() => {
@@ -36,8 +36,20 @@ const CreateModal = () => {
         createModal.onClose();
         loginModal.onOpen();
       })
-      .catch(() => {
-        toast.error("Something went wrong!");
+      .catch((error: any) => {
+        // Verifica se há uma resposta do servidor e exibe a mensagem de erro apropriada
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.error
+        ) {
+          toast.error(error.response.data.error);
+        } else {
+          toast.error("Something went wrong!");
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
@@ -95,6 +107,7 @@ const CreateModal = () => {
         buttonLabel="Submit"
         isOpen={createModal.isOpen}
         body={body}
+        disable={isLoading}
         onSubmit={handleSubmit(onSubmit)}
       />
     </main>

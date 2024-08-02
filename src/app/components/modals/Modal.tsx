@@ -11,6 +11,7 @@ interface ModalProps {
   title?: string;
   body?: React.ReactNode;
   buttonLabel: string;
+  disable?: boolean
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -19,7 +20,8 @@ const Modal: React.FC<ModalProps> = ({
   onSubmit,
   title,
   body,
-  buttonLabel
+  buttonLabel,
+  disable
 }) => {
   const [showModal, setShowModal] = useState<boolean | undefined>(isOpen);
 
@@ -66,7 +68,7 @@ const Modal: React.FC<ModalProps> = ({
               {/* Body */}
               <div className="relative p-5 flex-auto">{body}</div>
               <div className=" flex flex-row items-center gap-4 w-full">
-               <Button label="Submit" onClick={handleSubmit}/>
+               <Button disable={disable} label="Submit" onClick={handleSubmit}/>
               </div>
             </div>
           </div>

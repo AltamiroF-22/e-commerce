@@ -8,9 +8,12 @@ import { signIn } from "next-auth/react";
 import { toast } from "react-hot-toast";
 import { redirect } from "next/dist/server/api-utils";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const LoginModal = () => {
   const loginModal = UseLoginModal();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
 
   const router = useRouter();
 
@@ -26,14 +29,14 @@ const LoginModal = () => {
   });
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    console.log("credentials", {
-      ...data,
-    });
+   setIsLoading(true)
 
     signIn("credentials", {
       ...data,
       redirect: false,
     }).then((callback) => {
+      setIsLoading(false);
+      
       if (callback?.ok) {
         toast.success("logged in");
         router.refresh();
