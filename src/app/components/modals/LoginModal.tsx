@@ -4,9 +4,15 @@ import UseLoginModal from "@/app/hooks/useLogingModal";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import Input from "../inputs/Input";
 import Modal from "./Modal";
+import { signIn } from "next-auth/react";
+import { toast } from "react-hot-toast";
+import { redirect } from "next/dist/server/api-utils";
+import { useRouter } from "next/navigation";
 
 const LoginModal = () => {
   const loginModal = UseLoginModal();
+
+  const router = useRouter();
 
   const {
     register,
@@ -22,6 +28,21 @@ const LoginModal = () => {
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     console.log("credentials", {
       ...data,
+    });
+
+    signIn("credentials", {
+      ...data,
+      redirect: false,
+    }).then((callback) => {
+      if (callback?.ok) {
+        toast.success("logged in");
+        router.refresh();
+        loginModal.onClose();
+      }
+
+      if (callback?.error) {
+        toast.error(callback.error);
+      }
     });
   };
 
