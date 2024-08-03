@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Links from "./link";
 import Logo from "./Logo";
 import MenuOptions from "./MenuOptions";
@@ -8,8 +11,30 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
+  const [navBorder, setNavBorder] = useState<boolean>(false);
+
+  useEffect(() => {
+    const closeMenuOnScroll = () => {
+      const scrollY = window.scrollY;
+
+      if (scrollY > 200) {
+        setNavBorder(true);
+      } else {
+        setNavBorder(false);
+      }
+    };
+
+    window.addEventListener("scroll", closeMenuOnScroll);
+    return () => {
+      window.removeEventListener("scroll", closeMenuOnScroll);
+    };
+  }, []);
   return (
-    <nav className="p-5 xl:px-20 border-b fixed w-full bg-white z-10 shadow-sm">
+    <nav
+      className={`p-5 xl:px-20  fixed w-full bg-white z-10 ${
+        navBorder ? "border-b shadow-sm" : ""
+      } `}
+    >
       <div className="flex flex-row items-center justify-between gap-3 md:gap-0">
         <ul className="md:flex hidden md:flex-row gap-3">
           <Links
