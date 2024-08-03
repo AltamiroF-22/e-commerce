@@ -27,11 +27,13 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={font.className}>
-        <ToastProvider />
-        <Navbar currentUser={currentUser} />
+        <div className=" absolute">
+          <ToastProvider />
+          <Navbar currentUser={currentUser} />
 
-        <LoginModal />
-        <CreateModal />
+          <LoginModal />
+          <CreateModal />
+        </div>
 
         <div className="pb-28 pt-28">{children}</div>
       </body>

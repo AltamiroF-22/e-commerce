@@ -1,4 +1,3 @@
-import Container from "../Container";
 import Links from "./link";
 import Logo from "./Logo";
 import MenuOptions from "./MenuOptions";
@@ -10,9 +9,9 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
   return (
-    <nav className="p-5 px-20 border-b fixed w-full bg-white z-10 shadow-sm">
+    <nav className="p-5 xl:px-20 border-b fixed w-full bg-white z-10 shadow-sm">
       <div className="flex flex-row items-center justify-between gap-3 md:gap-0">
-        <ul className="flex gap-3">
+        <ul className="md:flex hidden md:flex-row gap-3">
           <Links
             label="favorites"
             path="/favorites"
