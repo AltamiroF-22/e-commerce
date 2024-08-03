@@ -1,17 +1,23 @@
 import bcrypt from "bcrypt";
 import prisma from "@/app/libs/prismadb";
 import { NextResponse } from "next/server";
-import { checkEmailExists } from "@/app/middlewares/CheckEmailExist";
 
 export async function POST(req: Request) {
-  const emailExist = await checkEmailExists(req);
-  if (emailExist) {
-    return emailExist;
-  }
 
   const body = await req.json();
 
   const { name, email, password } = body;
+
+  const existingUser = await prisma.eComerceUser.findUnique({
+    where: { email },
+  });
+
+  if (existingUser) {
+    return NextResponse.json(
+      { error: "Email already exists" },
+      { status: 400 }
+    );
+  }
 
   const hashedPassword = await bcrypt.hash(password, 12);
 

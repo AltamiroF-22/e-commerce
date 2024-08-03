@@ -5,6 +5,7 @@ import Links from "./link";
 import Logo from "./Logo";
 import MenuOptions from "./MenuOptions";
 import { SafeUser } from "@/app/types";
+import { RiShoppingBagLine } from "react-icons/ri";
 
 interface NavbarProps {
   currentUser: SafeUser | null;
@@ -29,6 +30,10 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
       window.removeEventListener("scroll", closeMenuOnScroll);
     };
   }, []);
+
+  const openShoppingcart = () => {
+    alert("shoping cart accessible");
+  };
   return (
     <nav
       className={`p-5 xl:px-20  fixed w-full bg-white z-10 ${
@@ -49,7 +54,23 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
 
         <Logo bigLogo />
 
-        <MenuOptions currentUser={currentUser} />
+        <div className="flex items-center gap-7">
+          <button
+            onClick={() => {
+              alert("para fazer");
+              currentUser && openShoppingcart();
+            }}
+          >
+            <RiShoppingBagLine
+              className={`text-zinc-800 text-3xl hover:opacity-85 transition ${
+                currentUser
+                  ? ""
+                  : "opacity-45 hover:opacity-45 cursor-not-allowed"
+              }`}
+            />
+          </button>
+          <MenuOptions currentUser={currentUser} />
+        </div>
       </div>
     </nav>
   );

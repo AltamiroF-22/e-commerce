@@ -5,11 +5,55 @@ import Image from "next/image";
 import HeaderPhoto from "./assets/images/headerPhoto.jpg";
 import Input from "./components/inputs/Input";
 import { AiOutlineSearch } from "react-icons/ai";
+import ProductCard from "./components/product/Product";
 
 export default function Home() {
+  const products = [
+    {
+      id: "1",
+      name: "Basic Tee",
+      href: "#",
+      imageSrc:
+        "https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg",
+      imageAlt: "Front of men's Basic Tee in black.",
+      price: "$35",
+      color: "Black",
+    },
+    {
+      id: "2",
+      name: "Basic Tee",
+      href: "#",
+      imageSrc:
+        "https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg",
+      imageAlt: "Front of men's Basic Tee in black.",
+      price: "$35",
+      color: "Black",
+    },
+    {
+      id: "3",
+      name: "Basic Tee",
+      href: "#",
+      imageSrc:
+        "https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg",
+      imageAlt: "Front of men's Basic Tee in black.",
+      price: "$35",
+      color: "Black",
+    },
+    {
+      id: "3",
+      name: "Basic Tee",
+      href: "#",
+      imageSrc:
+        "https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg",
+      imageAlt: "Front of men's Basic Tee in black.",
+      price: "$35",
+      color: "Black",
+    },
+    // More products...
+  ];
   return (
     <>
-      <header className=" flex items-center justify-center relative overflow-hidden w-[100dvw] md:w-[95vw] mx-auto h-[86dvh] bg-opacity-25 bg-black rounded-none  xl:rounded-3xl md:rounded-2xl mb-20">
+      <header className=" flex items-center justify-center relative overflow-hidden w-[100dvw] md:w-[95vw] mx-auto h-[86dvh] bg-opacity-25 bg-black rounded-none  xl:rounded-3xl md:rounded-2xl mb-40">
         <div className="text-white">
           <h1 className=" text-center mb-3 text-2xl font-semibold">
             Discover Your Perfect Outfit
@@ -47,7 +91,20 @@ export default function Home() {
         />
       </header>
       <Container>
-        <h1>products</h1>
+        <h1 className="text-2xl mb-10  ">Handpicked Selections for You</h1>
+        <div className="pt-24 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-4">
+          {products.map((product) => (
+            <ProductCard
+              key={product.id}
+              productName={product.name}
+              imageSrc={product.imageSrc}
+              color={product.color}
+              imageAlt={product.imageAlt}
+              price={product.price}
+              id={product.id}
+            />
+          ))}
+        </div>
       </Container>
     </>
   );
