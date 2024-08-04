@@ -7,6 +7,7 @@ import Input from "../components/inputs/Input";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import SingleImageUpload from "../components/inputs/SingleImageUpload";
 import TextArea from "../components/inputs/TextArea";
+import Select from "../components/inputs/GenderSelect";
 
 const CreateProduct = () => {
   const {
@@ -20,10 +21,12 @@ const CreateProduct = () => {
       title: "",
       description: "",
       imageSrc: "",
-      imagesSrc: "",
+      imagesSrc: [],
+      genderSelect: "UNISEX",
     },
   });
   const imageSrc = watch("imageSrc");
+  const imagesSrc = watch("imagesSrc");
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     console.log(data);
@@ -39,7 +42,7 @@ const CreateProduct = () => {
 
   return (
     <Container>
-      <main className="grid grid-cols-1 md:grid-cols-2 w-full mt-10">
+      <main className="grid grid-cols-1 md:grid-cols-2 md:gap-4 w-full mt-10">
         <div className="flex flex-col justify-center gap-4 items-stretch px-2 md:px-0">
           <Input
             id="title"
@@ -59,33 +62,44 @@ const CreateProduct = () => {
             errors={errors}
           />
 
-          <div className="">
-            <p className="block text-sm font-medium leading-6  mb-4  text-gray-900">
+<div>
+            <p className="block text-sm font-medium leading-6 mb-4 text-gray-900">
               Main Image*
             </p>
             <SingleImageUpload
-              onChange={(value) => setCustomValue("imageSrc", value)}
-              value={imageSrc}
+              onChange={(value) => setCustomValue("imageSrc", value[0])}
+              value={imageSrc ? [imageSrc] : []}
+              maxfile={1}
             />
             {errors.imageSrc && (
               <p className="text-red-500">Image is required!</p>
             )}
           </div>
-          <div className="">
-            <p className="block text-sm font-medium leading-6  mb-4 text-gray-900">
+          <div>
+            <p className="block text-sm font-medium leading-6 mb-4 text-gray-900">
               Images*
             </p>
             <SingleImageUpload
+              maxfile={10}
               onChange={(value) => setCustomValue("imagesSrc", value)}
-              value={imageSrc}
+              value={imagesSrc}
             />
-            {errors.imageSrc && (
-              <p className="text-red-500">Image is required!</p>
+            {errors.imagesSrc && (
+              <p className="text-red-500">At least one image is required!</p>
             )}
           </div>
         </div>
 
         <div className="flex flex-col justify-center items-stretch px-2 md:px-0">
+          <Select
+            id="genderSelect"
+            label="Gender*"
+            label2="(Unisex items will appear in filters for both genders.)"
+            options={["FEMALE", "MALE", "UNISEX"]}
+            defaultValue="UNISEX"
+            register={register("genderSelect")}
+            errors={errors}
+          />
           <div className="flex flex-col md:flex-row items-center justify-between">
             <Button
               label="Create"

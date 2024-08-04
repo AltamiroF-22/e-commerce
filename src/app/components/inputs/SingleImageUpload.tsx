@@ -10,51 +10,73 @@ declare global {
 }
 
 interface SingleImageUploadProps {
-  onChange: (value: string) => void;
-  value: string;
+  onChange: (value: string[]) => void;
+  value: string[];
+  maxfile: number;
 }
 
-const SingleImageUpload: React.FC<SingleImageUploadProps> = ({ onChange, value }) => {
-
+const SingleImageUpload: React.FC<SingleImageUploadProps> = ({
+  onChange,
+  value,
+  maxfile,
+}) => {
   const handleUpload = useCallback(
     (result: any) => {
-      onChange(result.info.secure_url);
+      onChange([...value, result.info.secure_url]);
     },
-    [onChange]
+    [onChange, value]
   );
 
   return (
-    <CldUploadWidget
-      onUpload={handleUpload}
-      uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
-      options={{
-        maxFiles: 1,
-      }}
-    >
-      {({ open }) => {
-        return (
-          <div
-            onClick={() => open?.()}
-            className="relative cursor-pointer hover:opacity-70 transition border-2 p-20 border-neutral-300 flex flex-col justify-center items-center gap-4 text-neutral-600"
-          >
-            <TbPhotoPlus size={30} />
-            <div className="font-semibold text-lg">
-              Click to upload
-              {value && (
-                <div className="absolute inset-0 w-full h-full">
+    <div>
+      <CldUploadWidget
+        onUpload={handleUpload}
+        uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+        options={{
+          maxFiles: maxfile,
+        }}
+      >
+        {({ open }) => {
+          return (
+            <div
+              onClick={() => open?.()}
+              className="relative cursor-pointer hover:opacity-70 transition border-2 p-20 border-neutral-300 flex flex-col justify-center items-center gap-4 text-neutral-600"
+            >
+              <TbPhotoPlus size={30} />
+              <div className="font-semibold text-lg">Click to upload</div>
+              <div className="absolute inset-0 w-full h-full grid grid-cols-3 gap-2">
+                {value.map((src, index) => (
                   <Image
+                    key={index}
                     alt="Upload"
-                    fill
-                    style={{ objectFit: "cover" }}
-                    src={value}
+                    src={src}
+                    layout="fill"
+                    objectFit="cover"
+                    className="object-cover"
                   />
-                </div>
-              )}
+                ))}
+              </div>
             </div>
-          </div>
-        );
-      }}
-    </CldUploadWidget>
+          );
+        }}
+      </CldUploadWidget>
+
+      {value.length > 1 && (
+        <div className="mt-4 grid grid-cols-3 gap-4">
+          {value.map((src, index) => (
+            <div key={index} className="relative w-full h-32">
+              <Image
+                alt={`Uploaded image ${index + 1}`}
+                src={src}
+                layout="fill"
+                objectFit="cover"
+                className="object-cover"
+              />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
 
