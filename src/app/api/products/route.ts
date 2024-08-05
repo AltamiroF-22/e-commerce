@@ -22,8 +22,8 @@ export async function POST(req: Request) {
       data: {
         title,
         description,
-        images: imageSrc,
-        mainImage: imagesSrc,
+        images: imagesSrc,
+        mainImage: imageSrc,
         category,
         gender: genderSelect,
         eComerceUserId: currentUser?.id,
