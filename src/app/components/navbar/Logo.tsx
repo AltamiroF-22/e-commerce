@@ -22,7 +22,7 @@ const Logo: React.FC<LogoProps> = ({
       {bigLogo && (
         <h1
           onClick={() => router.push("/")}
-          className="text-2xl font-bold cursor-pointer hover:opacity-60 transition"
+          className="text-xl md:text-2xl font-bold cursor-pointer hover:opacity-60 transition"
         >
           WardrobeWonders
         </h1>

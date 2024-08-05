@@ -18,7 +18,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
     const closeMenuOnScroll = () => {
       const scrollY = window.scrollY;
 
-      if (scrollY > 200) {
+      if (scrollY > 10) {
         setNavBorder(true);
       } else {
         setNavBorder(false);
@@ -62,7 +62,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
             }}
           >
             <RiShoppingBagLine
-              className={`text-zinc-800 text-3xl hover:opacity-85 transition ${
+              className={`text-zinc-800 text-2xl hover:opacity-85 transition ${
                 currentUser
                   ? ""
                   : "opacity-45 hover:opacity-45 cursor-not-allowed"

@@ -40,7 +40,7 @@ export default function Home() {
       color: "Black",
     },
     {
-      id: "3",
+      id: "4",
       name: "Basic Tee",
       href: "#",
       imageSrc:
@@ -87,11 +87,12 @@ export default function Home() {
         <Image
           src={HeaderPhoto}
           alt="Header Image"
-          className=" absolute object-cover object-ceneter h-full w-full top-0 -z-10"
+          className="absolute object-cover h-full w-full top-0 -z-[1]"
         />
       </header>
+
       <Container>
-        <h1 className="text-2xl mb-10  ">Handpicked Selections for You</h1>
+        <h1 className="text-2xl mb-10 ">Handpicked Selections for You</h1>
         <div className="pt-24 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-4">
           {products.map((product) => (
             <ProductCard

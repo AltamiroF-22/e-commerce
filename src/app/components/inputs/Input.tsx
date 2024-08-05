@@ -7,6 +7,7 @@ interface InputProps {
   type?: string;
   required?: boolean;
   label: string;
+  label2?: string;
   placeholder?: string;
   register: ReturnType<UseFormRegister<FieldValues>>;
   errors: FieldErrors;
@@ -19,6 +20,7 @@ const Input: React.FC<InputProps> = ({
   required,
   placeholder,
   errors,
+  label2,
   label,
 }) => {
   const errorMessage = errors[id]?.message as string | undefined;
@@ -29,7 +31,7 @@ const Input: React.FC<InputProps> = ({
         htmlFor={id}
         className="block text-sm font-medium leading-6 text-gray-900"
       >
-        {label}
+        {label} <span className="text-zinc-300">{label2}</span>
       </label>
       <div className="mt-2">
         <input

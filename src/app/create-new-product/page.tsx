@@ -8,6 +8,10 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import SingleImageUpload from "../components/inputs/SingleImageUpload";
 import TextArea from "../components/inputs/TextArea";
 import Select from "../components/inputs/GenderSelect";
+import ColorSizeStock from "../components/ColorSizeStock";
+import { useEffect, useRef, useState } from "react";
+import { AiOutlinePlus } from "react-icons/ai";
+import { ChromePicker } from "react-color";
 
 const CreateProduct = () => {
   const {
@@ -23,13 +27,38 @@ const CreateProduct = () => {
       imageSrc: "",
       imagesSrc: [],
       genderSelect: "UNISEX",
+      catergory: "",
     },
   });
   const imageSrc = watch("imageSrc");
   const imagesSrc = watch("imagesSrc");
 
+  const [choices, setChoices] = useState<
+    { color: string; size: string; stock: number }[]
+  >([]);
+  const [currentColor, setCurrentColor] = useState("#3C6D43");
+  const [currentSize, setCurrentSize] = useState("");
+  const [currentStock, setCurrentStock] = useState(0);
+  const [showAddMore, setShowAddMore] = useState<boolean>(false);
+  const [showColorPicker, setShowColorPicker] = useState<boolean>(false);
+
+  const handleAddChoise = () => {
+    if (currentSize.length === 0 || currentStock === 0) {
+      setShowAddMore(false);
+      return;
+    }
+    setChoices([
+      ...choices,
+      { color: currentColor, size: currentSize, stock: currentStock },
+    ]);
+
+    setCurrentColor("#3C6D43");
+    setCurrentSize("");
+    setCurrentStock(0);
+  };
+
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    console.log(data);
+    console.log({ ...data, choices });
   };
 
   const setCustomValue = (id: string, value: any) => {
@@ -62,7 +91,7 @@ const CreateProduct = () => {
             errors={errors}
           />
 
-<div>
+          <div>
             <p className="block text-sm font-medium leading-6 mb-4 text-gray-900">
               Main Image*
             </p>
@@ -90,7 +119,7 @@ const CreateProduct = () => {
           </div>
         </div>
 
-        <div className="flex flex-col justify-center items-stretch px-2 md:px-0">
+        <div className="flex flex-col mt-6 md:mt-0 justify-start gap-2 items-stretch px-2 md:px-0">
           <Select
             id="genderSelect"
             label="Gender*"
@@ -100,6 +129,95 @@ const CreateProduct = () => {
             register={register("genderSelect")}
             errors={errors}
           />
+
+          <Input
+            label="Category"
+            label2="(Optional)"
+            register={register("catergory")}
+            id="catergory"
+            errors={errors}
+          />
+
+          <hr className="mt-5" />
+
+          <div className="relative grid grid-cols-2 gap-4 mt-10 pl-1">
+            {choices.length > 0 &&
+              choices.map((value) => (
+                <div className=" justify-self-start">
+                  <ColorSizeStock
+                    key={value.size}
+                    color={value.color}
+                    size={value.size}
+                    stock={value.stock}
+                  />
+                </div>
+              ))}
+
+            <button
+              onClick={() => setShowAddMore(true)}
+              className="w-36 border flex items-center py-2 justify-center text-zinc-300 rounded-md hover:bg-zinc-950 transition hover:text-white"
+            >
+              <AiOutlinePlus />
+            </button>
+            {showAddMore && (
+              <div className="w-full z-20 flex-col mt-4 absolute bg-white border top-20 flex gap-2 p-5 rounded-md">
+                <div className="flex gap-4">
+                  <div className="flex items-center gap-2">
+                    <span>Cor:</span>
+                    <div
+                      onClick={() => setShowColorPicker(!showColorPicker)}
+                      className="w-10 h-6 border cursor-pointer"
+                      style={{ backgroundColor: currentColor }}
+                    ></div>
+                    {showColorPicker && (
+                      <ChromePicker
+                        color={currentColor}
+                        className="absolute left-0 top-36"
+                        onChangeComplete={(color) => setCurrentColor(color.hex)}
+                      />
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span>Size:</span>
+                    <input
+                      type="text"
+                      className="border w-full pl-2 "
+                      maxLength={3}
+                      required
+                      onChange={(e) => setCurrentSize(e.target.value)}
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span>Stock:</span>
+                    <input
+                      type="number"
+                      className="border w-full pl-2"
+                      min={1}
+                      required
+                      onChange={(e) => setCurrentStock(Number(e.target.value))}
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-2 mt-5">
+                  <button
+                    onClick={() => {
+                      handleAddChoise(), setShowAddMore(false);
+                    }}
+                    className="border rounded-sm p-2 w-full hover:text-white transition hover:bg-zinc-900"
+                  >
+                    Confirm
+                  </button>
+                  <button
+                    onClick={() => setShowAddMore(false)}
+                    className="border rounded-sm p-2 w-full hover:text-white transition hover:bg-zinc-900"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
           <div className="flex flex-col md:flex-row items-center justify-between">
             <Button
               label="Create"

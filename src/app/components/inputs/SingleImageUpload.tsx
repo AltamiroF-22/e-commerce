@@ -62,7 +62,7 @@ const SingleImageUpload: React.FC<SingleImageUploadProps> = ({
       </CldUploadWidget>
 
       {value.length > 1 && (
-        <div className="mt-4 grid grid-cols-3 gap-4">
+        <div className="mt-4 grid grid-cols-3 md:grid-cols-4 gap-4">
           {value.map((src, index) => (
             <div key={index} className="relative w-full h-32">
               <Image
@@ -70,7 +70,7 @@ const SingleImageUpload: React.FC<SingleImageUploadProps> = ({
                 src={src}
                 layout="fill"
                 objectFit="cover"
-                className="object-cover"
+                className="object-cover aspect-square"
               />
             </div>
           ))}
