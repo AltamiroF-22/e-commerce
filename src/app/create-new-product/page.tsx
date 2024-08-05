@@ -3,17 +3,24 @@
 import Button from "../components/Button";
 import Container from "../components/Container";
 import Input from "../components/inputs/Input";
+import axios from "axios";
 
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import SingleImageUpload from "../components/inputs/SingleImageUpload";
 import TextArea from "../components/inputs/TextArea";
 import Select from "../components/inputs/GenderSelect";
 import ColorSizeStock from "../components/ColorSizeStock";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { ChromePicker } from "react-color";
+import toast from "react-hot-toast";
+import { SafeUser } from "../types";
 
-const CreateProduct = () => {
+interface CreateProductProps {
+  currentUser: SafeUser;
+}
+
+const CreateProduct: React.FC<CreateProductProps> = ({ currentUser }) => {
   const {
     register,
     handleSubmit,
@@ -27,7 +34,7 @@ const CreateProduct = () => {
       imageSrc: "",
       imagesSrc: [],
       genderSelect: "UNISEX",
-      catergory: "",
+      category: "",
     },
   });
   const imageSrc = watch("imageSrc");
@@ -57,16 +64,48 @@ const CreateProduct = () => {
     setCurrentStock(0);
   };
 
-  const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    console.log({ ...data, choices });
-  };
-
   const setCustomValue = (id: string, value: any) => {
     setValue(id, value, {
       shouldValidate: true,
       shouldDirty: true,
       shouldTouch: true,
     });
+  };
+
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    console.log({ ...data, choices });
+
+    if (choices.length === 0) {
+      toast.error("The product need have at least one variant!");
+      return;
+    }
+
+    if (data.imageSrc.length === 0) {
+      toast.error("The product must have a main image!");
+      return;
+    }
+
+    if (data.imagesSrc.length <= 2) {
+      toast.error("The product must have at least 3 images!");
+      return;
+    }
+
+    if (currentUser?.role !== "SELLER") {
+      toast.error("You need to be a seller to create a product!");
+      return;
+    }
+
+    try {
+      await axios.post("/api/products", {
+        ...data,
+        choices,
+      });
+
+      toast.success("Produto criado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao criar o produto:", error);
+      toast.error("Erro ao criar o produto.");
+    }
   };
 
   return (
@@ -133,8 +172,8 @@ const CreateProduct = () => {
           <Input
             label="Category"
             label2="(Optional)"
-            register={register("catergory")}
-            id="catergory"
+            register={register("category")}
+            id="category"
             errors={errors}
           />
 

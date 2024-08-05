@@ -1,27 +1,39 @@
 import { NextResponse } from "next/server";
 import prisma from "@/app/libs/prismadb";
+import getCurrentUser from "@/app/actions/getCurrentUser";
 
 export async function POST(req: Request) {
   try {
+    const currentUser = await getCurrentUser();
+
     const body = await req.json();
-    const { title, description, images, mainImage, category, gender, choises } = body;
+    const {
+      title,
+      description,
+      imagesSrc,
+      imageSrc,
+      category,
+      genderSelect,
+      choices,
+    } = body;
 
     // Criar o produto
     const product = await prisma.products.create({
       data: {
         title,
         description,
-        images,
-        mainImage,
+        images: imageSrc,
+        mainImage: imagesSrc,
         category,
-        gender,
+        gender: genderSelect,
+        eComerceUserId: currentUser?.id,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
     });
 
     // Processar variantes de produto
-    for (const { color, size, stock } of choises) {
+    for (const { color, size, stock } of choices) {
       // Criar ou encontrar a cor
       const colorEntity = await prisma.color.upsert({
         where: { name: color },
@@ -64,9 +76,9 @@ export async function POST(req: Request) {
       }
     }
 
-    return NextResponse.json({ message: "Produto criado com sucesso!" });
+    return NextResponse.json({ message: "Product created!" });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: "Erro ao criar o produto." });
+    return NextResponse.json({ error: "Error to create the product!." });
   }
 }

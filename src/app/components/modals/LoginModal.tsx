@@ -6,14 +6,12 @@ import Input from "../inputs/Input";
 import Modal from "./Modal";
 import { signIn } from "next-auth/react";
 import { toast } from "react-hot-toast";
-import { redirect } from "next/dist/server/api-utils";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const LoginModal = () => {
   const loginModal = UseLoginModal();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
 
   const router = useRouter();
 
@@ -29,14 +27,14 @@ const LoginModal = () => {
   });
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
-   setIsLoading(true)
+    setIsLoading(true);
 
     signIn("credentials", {
       ...data,
       redirect: false,
     }).then((callback) => {
       setIsLoading(false);
-      
+
       if (callback?.ok) {
         toast.success("logged in");
         router.refresh();
@@ -84,16 +82,14 @@ const LoginModal = () => {
   );
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <Modal
-        title="Login"
-        onClose={loginModal.onClose}
-        buttonLabel="Submit"
-        isOpen={loginModal.isOpen}
-        body={body}
-        onSubmit={handleSubmit(onSubmit)}
-      />
-    </main>
+    <Modal
+      title="Login"
+      onClose={loginModal.onClose}
+      buttonLabel="Submit"
+      isOpen={loginModal.isOpen}
+      body={body}
+      onSubmit={handleSubmit(onSubmit)}
+    />
   );
 };
 

@@ -100,17 +100,15 @@ const CreateModal = () => {
   );
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <Modal
-        title="Create User"
-        onClose={createModal.onClose}
-        buttonLabel="Submit"
-        isOpen={createModal.isOpen}
-        body={body}
-        disable={isLoading}
-        onSubmit={handleSubmit(onSubmit)}
-      />
-    </main>
+    <Modal
+      title="Create User"
+      onClose={createModal.onClose}
+      buttonLabel="Submit"
+      isOpen={createModal.isOpen}
+      body={body}
+      disable={isLoading}
+      onSubmit={handleSubmit(onSubmit)}
+    />
   );
 };
 
