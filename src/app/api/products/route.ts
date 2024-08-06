@@ -12,6 +12,7 @@ export async function POST(req: Request) {
       description,
       imagesSrc,
       imageSrc,
+      price,
       category,
       genderSelect,
       choices,
@@ -21,6 +22,7 @@ export async function POST(req: Request) {
     const product = await prisma.products.create({
       data: {
         title,
+        price: Number(price),
         description,
         images: imagesSrc,
         mainImage: imageSrc,
@@ -80,5 +82,38 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Error to create the product!." });
+  }
+}
+
+export async function GET(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const limit = parseInt(searchParams.get("limit") || "10", 10);
+    const offset = (page - 1) * limit;
+
+    const products = await prisma.products.findMany({
+      skip: offset,
+      take: limit,
+    });
+
+    const totalProducts = await prisma.products.count();
+
+    return NextResponse.json(
+      {
+        products,
+        totalProducts,
+        totalPages: Math.ceil(totalProducts / limit),
+        currentPage: page,
+      },
+
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    return NextResponse.json(
+      { error: "Error fetching products!" },
+      { status: 500 }
+    );
   }
 }

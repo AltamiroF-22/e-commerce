@@ -31,6 +31,7 @@ const CreateProduct: React.FC<CreateProductProps> = ({ currentUser }) => {
     defaultValues: {
       title: "",
       description: "",
+      price: '',
       imageSrc: "",
       imagesSrc: [],
       genderSelect: "UNISEX",
@@ -59,7 +60,7 @@ const CreateProduct: React.FC<CreateProductProps> = ({ currentUser }) => {
       { color: currentColor, size: currentSize, stock: currentStock },
     ]);
 
-    setCurrentColor("#3C6D43");
+    setCurrentColor(currentColor);
     setCurrentSize("");
     setCurrentStock(0);
   };
@@ -110,7 +111,7 @@ const CreateProduct: React.FC<CreateProductProps> = ({ currentUser }) => {
 
   return (
     <Container>
-      <main className="grid grid-cols-1 md:grid-cols-2 md:gap-4 w-full mt-10">
+      <main className="grid grid-cols-1 md:grid-cols-2 md:gap-4  w-full mt-10">
         <div className="flex flex-col justify-center gap-4 items-stretch px-2 md:px-0">
           <Input
             id="title"
@@ -126,6 +127,21 @@ const CreateProduct: React.FC<CreateProductProps> = ({ currentUser }) => {
             label="Description*"
             register={register("description", {
               required: "Description is required!",
+            })}
+            errors={errors}
+          />
+
+          <Input
+            id="price"
+            label="Price*"
+            type="number"
+            required
+            register={register("price", {
+              required: "Price is required!",
+              min: {
+                value: 1,
+                message: "Price can't be below 1$",
+              },
             })}
             errors={errors}
           />
@@ -177,9 +193,9 @@ const CreateProduct: React.FC<CreateProductProps> = ({ currentUser }) => {
             errors={errors}
           />
 
-          <hr className="mt-5" />
-
-          <div className="relative grid grid-cols-2 gap-4 mt-10 pl-1">
+          <hr className="my-5" />
+          <p className="text-sm">Products variants</p>
+          <div className="relative grid grid-cols-2 gap-4 mt-2 pl-1">
             {choices.length > 0 &&
               choices.map((value) => (
                 <div className=" justify-self-start">
