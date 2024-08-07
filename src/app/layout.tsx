@@ -20,9 +20,10 @@ const font = Nunito({
 
 export default async function RootLayout({
   children,
+  modal,
 }: Readonly<{
   children: React.ReactNode;
-
+  modal: React.ReactNode;
 }>) {
   const currentUser = await getCurrentUser();
 
@@ -36,7 +37,9 @@ export default async function RootLayout({
           <CreateModal />
         </div>
 
-        <div className="pb-28 pt-28">{children}</div>
+        <div className="pb-28 pt-28">
+          {children} {modal}
+        </div>
       </body>
     </html>
   );

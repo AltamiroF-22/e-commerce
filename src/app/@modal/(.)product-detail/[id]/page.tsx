@@ -1,6 +1,6 @@
 "use client";
 
-// import React from "react";
+import React from "react";
 import ModalInterception from "@/app/components/modals/ModalInterception";
 import { useParams } from "next/navigation";
 
