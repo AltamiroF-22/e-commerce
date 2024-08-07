@@ -10,7 +10,7 @@ interface ProductCardProps {
   id: string;
   imageSrc: string;
   productName: string;
-  color?: string;
+  gender: string;
   price: string;
 }
 
@@ -20,13 +20,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
   productName,
   id,
   price,
-  color,
+  gender,
 }) => {
   const router = useRouter();
   return (
     <div
       onClick={() => router.push(`/product-detail/${id}`)}
-      className="hover:opacity-80 transition cursor-pointer"
+      className="hover:opacity-80 transition cursor-pointer mb-5"
     >
       <div className="aspect-square bg-contain w-full relative overflow-hidden rounded-xl ">
         <Image
@@ -47,7 +47,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
               {productName}
             </a>
           </h3>
-          {color && <p className="mt-1 text-sm text-gray-500">{color}</p>}
+          <p className="mt-1 text-sm text-gray-500">
+            {gender.at(0)}
+            {gender.slice(1, gender.length).toLowerCase()}
+          </p>
         </div>
         <p className="text-sm font-medium text-gray-900">${price}</p>
       </div>

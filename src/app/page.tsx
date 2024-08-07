@@ -53,6 +53,8 @@ export default function Home() {
     }
   }, [currentPage, loading]);
 
+  // TO DO: add a button with plus icon to search for more 10 products
+
   const fetchHandpicked = useCallback(async () => {
     try {
       const response = await axios.get(
@@ -129,9 +131,23 @@ export default function Home() {
       </header>
 
       <Container>
-        <h1 className="text-2xl mb-10 ">Handpicked Selections for You</h1>
-        <div className="pt-24 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-4">
+        <h1 className="text-2xl mb-5 ">Handpicked Selections for You</h1>
+        <div className="pt-24 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-40">
           {handpicked.map((product) => (
+            <ProductCard
+              key={product.id}
+              productName={product.title}
+              imageSrc={product.mainImage}
+              gender={product.gender}
+              imageAlt={product.description}
+              price={product.price.toFixed(2).toString()}
+              id={product.id}
+            />
+          ))}
+        </div>
+        {/* <h1 className="text-2xl mb-5 ">Customers also purchased</h1>
+        <div className="pt-24 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-10">
+          {products.map((product) => (
             <ProductCard
               key={product.id}
               productName={product.title}
@@ -141,7 +157,7 @@ export default function Home() {
               id={product.id}
             />
           ))}
-        </div>
+        </div> */}
       </Container>
     </>
   );

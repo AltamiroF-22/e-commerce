@@ -8,6 +8,7 @@ import CreateModal from "./components/modals/CreateModal";
 
 import getCurrentUser from "./actions/getCurrentUser";
 import Navbar from "./components/navbar/Navbar";
+import { SafeUser } from "./types";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -21,16 +22,16 @@ export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
+
 }>) {
   const currentUser = await getCurrentUser();
 
   return (
     <html lang="en">
       <body className={font.className}>
-        <div className=" absolute">
+        <div className="absolute">
           <ToastProvider />
-          <Navbar currentUser={currentUser} />
-
+          <Navbar currentUser={currentUser as SafeUser} />
           <LoginModal />
           <CreateModal />
         </div>
