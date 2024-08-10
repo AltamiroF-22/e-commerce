@@ -39,13 +39,10 @@ export default function ModalInterception({
   return (
     <div
       ref={overlay}
-      className="fixed z-10 left-0 right-0 top-0 bottom-0 mx-auto bg-black/60 overflow-y-auto p-0 md:p-10 backdrop-blur-sm"
+      className="fixed z-10 left-0 right-0 top-0 bottom-0 my-auto bg-zinc-900/60 overflow-y-auto p-0 md:p-10 "
       onClick={onClick}
     >
-      <div
-        ref={wrapper}
-        className="absolute  md:top-1/2 left-1/2 -translate-x-1/2 md:-translate-y-1/2 w-[100vw]  md:h-auto md:w-8/12 lg:w-2/5 p-6"
-      >
+      <div ref={wrapper} className="flex items-center h-full justify-center">
         {children}
       </div>
     </div>

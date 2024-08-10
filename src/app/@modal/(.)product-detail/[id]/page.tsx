@@ -1,16 +1,48 @@
 "use client";
 
-import React from "react";
 import ModalInterception from "@/app/components/modals/ModalInterception";
 import { useParams } from "next/navigation";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DialogPanel, Radio, RadioGroup } from "@headlessui/react";
 
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/20/solid";
 
-const ProductDetailsModal = () => {
+import Image from "next/image";
+import axios from "axios";
+
+interface ProductDetail {
+  id: string;
+  title: string;
+  mainImage: string;
+  images: string[];
+  description: string;
+  eComerceUserId: string;
+  gender: "MALE" | "FEMALE" | "UNISEX";
+  price: number;
+
+  category?: string;
+  variants: [
+    {
+      color: {
+        id: string;
+        name: string;
+      };
+      colorId: string;
+      id: string;
+      productId: string;
+      size: {
+        id: string;
+        name: string;
+      };
+      sizeId: string;
+      stock: number;
+    }
+  ];
+}
+
+const ProductDetailsModal = async () => {
   const product = {
     name: "Basic Tee 6-Pack ",
     price: "$192",
@@ -36,7 +68,6 @@ const ProductDetailsModal = () => {
       { name: "XXXL", inStock: false },
     ],
   };
-
   function classNames(...classes: any) {
     return classes.filter(Boolean).join(" ");
   }
@@ -47,9 +78,31 @@ const ProductDetailsModal = () => {
   const params = useParams();
   const id = params?.id;
 
+  const [productDetail, setProductDetail] = useState<ProductDetail | null>(
+    null
+  );
+
+  const fetchProductDetail = async () => {
+    try {
+      const response = await axios.get(`/api/product/${id}`);
+      console.log(response.data);
+      setProductDetail(response.data);
+    } catch (error) {
+      console.error("Error fetching product details:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (id) {
+      fetchProductDetail();
+    }
+  }, [id]);
+
+  if (!productDetail) return;
+
   return (
     <ModalInterception>
-      <div className="relative flex w-full items-center overflow-hidden bg-white px-4 pb-8 pt-14 shadow-2xl sm:px-6 sm:pt-8 md:p-6 lg:p-8">
+      <div className="relative flex w-full max-w-[1024px] items-center overflow-hidden bg-white px-4 pb-8 pt-14 shadow-2xl sm:px-6 sm:pt-8 md:p-6 lg:p-8">
         <button
           type="button"
           onClick={() => setOpen(false)}
@@ -60,16 +113,17 @@ const ProductDetailsModal = () => {
         </button>
 
         <div className="grid w-full grid-cols-1 items-start gap-x-6 gap-y-8 sm:grid-cols-12 lg:gap-x-8">
-          <div className="aspect-h-3 aspect-w-2 overflow-hidden rounded-lg bg-gray-100 sm:col-span-4 lg:col-span-5">
-            <img
-              alt={product.imageAlt}
-              src={product.imageSrc}
-              className="object-cover object-center"
+          <div className="relative h-[100%] w-[100%] rounded-lg bg-gray-100 sm:col-span-5 lg:col-span-16">
+            <Image
+              alt={productDetail.mainImage}
+              src={productDetail.mainImage}
+              fill
+              className="object-cover object-center rounded-md"
             />
           </div>
           <div className="sm:col-span-8 lg:col-span-7">
             <h2 className="text-2xl font-bold text-gray-900 sm:pr-12">
-              {product.name}
+              {productDetail.title}
             </h2>
 
             <section aria-labelledby="information-heading" className="mt-2">
@@ -77,7 +131,7 @@ const ProductDetailsModal = () => {
                 Product information
               </h3>
 
-              <p className="text-2xl text-gray-900">{product.price}</p>
+              <p className="text-2xl text-gray-900">${productDetail.price.toFixed(2)}</p>
 
               {/* Reviews */}
               <div className="mt-6">
@@ -125,22 +179,21 @@ const ProductDetailsModal = () => {
                     onChange={setSelectedColor}
                     className="mt-4 flex items-center space-x-3"
                   >
-                    {product.colors.map((color) => (
+                    {productDetail.variants.map((product) => (
                       <Radio
-                        key={color.name}
-                        value={color}
-                        aria-label={color.name}
-                        className={classNames(
-                          color.selectedClass,
+                        key={product.colorId}
+                        value={product.color.name}
+                        aria-label={product.color.name}
+                        style={{ background: product.color.name }}
+                        className={
                           "relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 focus:outline-none data-[checked]:ring-2 data-[focus]:data-[checked]:ring data-[focus]:data-[checked]:ring-offset-1"
-                        )}
+                        }
                       >
                         <span
                           aria-hidden="true"
-                          className={classNames(
-                            color.class,
+                          className={
                             "h-8 w-8 rounded-full border border-black border-opacity-10"
-                          )}
+                          }
                         />
                       </Radio>
                     ))}
@@ -166,20 +219,20 @@ const ProductDetailsModal = () => {
                     onChange={setSelectedSize}
                     className="mt-4 grid grid-cols-4 gap-4"
                   >
-                    {product.sizes.map((size) => (
+                    {productDetail.variants.map((size) => (
                       <Radio
-                        key={size.name}
-                        value={size}
-                        disabled={!size.inStock}
+                        key={size.sizeId}
+                        value={size.size.name}
+                        disabled={size.stock <= 0}
                         className={classNames(
-                          size.inStock
+                          size.stock > 0
                             ? "cursor-pointer bg-white text-gray-900 shadow-sm"
                             : "cursor-not-allowed bg-gray-50 text-gray-200",
                           "group relative flex items-center justify-center rounded-md border px-4 py-3 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none data-[focus]:ring-2 data-[focus]:ring-indigo-500 sm:flex-1"
                         )}
                       >
-                        <span>{size.name}</span>
-                        {size.inStock ? (
+                        <span>{size.size.name}</span>
+                        {size.stock > 0 ? (
                           <span
                             aria-hidden="true"
                             className="pointer-events-none absolute -inset-px rounded-md border-2 border-transparent group-data-[focus]:border group-data-[checked]:border-indigo-500"
@@ -212,7 +265,7 @@ const ProductDetailsModal = () => {
 
                 <button
                   type="submit"
-                  className="mt-6 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                  className="mt-6 flex w-full items-center justify-center rounded-md border border-transparent bg-zinc-950  px-8 py-3 text-base font-medium text-white hover:bg-zinc-800 transition focus:outline-none "
                 >
                   Add to bag
                 </button>
