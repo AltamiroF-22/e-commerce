@@ -7,6 +7,7 @@ import axios from "axios";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 
 interface ProductDetail {
   id: string;
@@ -37,20 +38,57 @@ interface ProductDetail {
     }
   ];
 }
+
 const ProductDetails = () => {
-  
+  const [productDetail, setProductDetail] = useState<ProductDetail | null>(
+    null
+  );
+  const [selectedColor, setSelectedColor] = useState<string>("");
+  const [availableSizes, setAvailableSizes] =
+    useState<[{ sizeId: string; sizeName: string }]>();
+  const [selectedStock, setSelectedStock] = useState<number>(0);
+
+  const { register, handleSubmit, watch } = useForm();
+  const selectedSize = watch("size");
+
+  const handleColorSelection = (colorId: string) => {
+    const filter = productDetail?.variants
+      .filter((variant) => variant.colorId === colorId && variant.stock > 0)
+      .map((variant) => ({
+        sizeId: variant.sizeId,
+        sizeName: variant.size.name,
+      }));
+
+    setAvailableSizes(filter);
+    setSelectedColor(colorId);
+  };
+
+  useEffect(() => {
+    if (selectedColor && selectedSize) {
+      const selectedVariant = productDetail?.variants.find(
+        (variant) =>
+          variant.colorId === selectedColor && variant.sizeId === selectedSize
+      );
+      setSelectedStock(selectedVariant?.stock || 0);
+    }
+  }, [selectedColor, selectedSize]);
+
+  const uniqueColors = Array.from(
+    new Set(productDetail?.variants.map((variant) => variant.colorId))
+  ).map((colorId) =>
+    productDetail?.variants.find((variant) => variant.colorId === colorId)
+  );
+
   const product = {
     rating: 3.9,
   };
+
   function classNames(...classes: any) {
     return classes.filter(Boolean).join(" ");
   }
 
   const params = useParams();
   const id = params?.id;
-  const [productDetail, setProductDetail] = useState<ProductDetail | null>(
-    null
-  );
 
   const fetchProductDetail = async () => {
     try {
@@ -67,8 +105,18 @@ const ProductDetails = () => {
 
   if (!productDetail) return null;
 
+  const onSubmit = (data: any) => {
+    console.log({
+      productID: productDetail.id,
+      sizeID: data.size,
+      colorID: selectedColor,
+    });
+    // Adicione aqui a lógica para lidar com a seleção de tamanho
+  };
+
   return (
     <Container>
+      {/* Layout de imagens e detalhes do produto */}
       <div className="grid md:grid-cols-3 grid-rows-4 md:grid-rows-2 gap-4 pb-8">
         <div className="cursor-pointer hover:opacity-90 transition  relative md:col-span-1 md:row-span-2">
           <Image
@@ -111,9 +159,10 @@ const ProductDetails = () => {
         </div>
       </div>
 
+      {/* Detalhes e seleção do produto */}
       <div className="flex gap-4 flex-col items-start md:flex-row">
         <div className="w-full">
-          <h1 className="text-xl pb-4 text-zinc-900 font-semibold">
+          <h1 className="text-xl pb-2 text-zinc-900 font-semibold">
             {productDetail.title}
           </h1>
           <p className="text-sm">{productDetail.description}</p>
@@ -173,29 +222,77 @@ const ProductDetails = () => {
           <p className="mb-7">${productDetail.price.toFixed(2)}</p>
           <p>Color</p>
           <div className="flex gap-2 mb-7 mt-1">
-            {productDetail.variants.map((product) => (
-              <div
-                style={{ background: product.color.name }}
-                key={product.colorId}
-                className="h-8 w-8 rounded-full border"
-              ></div>
-            ))}
-          </div>
-          <p>Size</p>
-          <div className="w-full grid xl:max-w-[300px] gap-2 grid-cols-3 xl:grid-cols-4 my-2">
-            {productDetail.variants.map((product) => (
-              <div
-                key={product.sizeId}
-                className="w-full  border py-4 flex items-center rounded-md justify-center"
+            {uniqueColors.map((variant) => (
+              <label
+                key={variant?.colorId}
+                htmlFor={`color-${variant?.colorId}`}
+                className="cursor-pointer"
               >
-                {product.size.name}
-              </div>
+                <input
+                  type="radio"
+                  id={`color-${variant?.colorId}`}
+                  value={variant?.colorId}
+                  className="hidden"
+                  checked={selectedColor === variant?.colorId}
+                  onChange={() => handleColorSelection(variant?.colorId)}
+                />
+                <div
+                  style={{ background: `${variant?.color.name}` }}
+                  className={`w-8 h-8 border rounded-full ${
+                    selectedColor === variant?.colorId && "border-blue-600"
+                  }`}
+                ></div>
+              </label>
             ))}
           </div>
 
-          <button className=" mt-4 w-full p-4 bg-zinc-950 text-white rounded-md hover:bg-zinc-800 transition">
-            Add to bag
-          </button>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <p>Size</p>
+            <div className="w-full grid xl:max-w-[300px] gap-2 grid-cols-3 xl:grid-cols-4 my-2">
+              {availableSizes?.map((product) => (
+                <label
+                  key={product.sizeId}
+                  htmlFor={`size-${product.sizeId}`}
+                  className="cursor-pointer w-full"
+                >
+                  <input
+                    type="radio"
+                    id={`size-${product.sizeId}`}
+                    {...register("size")}
+                    value={product.sizeId}
+                    className="hidden"
+                  />
+                  <div
+                    className={`border py-4 flex items-center justify-center rounded-md ${
+                      selectedSize === product.sizeId
+                        ? "border-blue-600"
+                        : "border-gray-300"
+                    }`}
+                  >
+                    {product.sizeName}
+                  </div>
+                </label>
+              ))}
+            </div>
+
+            {selectedStock > 0 ? (
+              <p className="text-sm pt-2 pb-4 text-zinc-950">
+                {selectedStock} items in stock
+              </p>
+            ) : (
+              <p className="text-sm pt-2 pb-4 text-zinc-700">Out of stock</p>
+            )}
+
+            <button
+              type="submit"
+              className={`mt-4 w-full p-4 bg-zinc-950 text-white rounded-md hover:bg-zinc-800 transition ${
+                selectedStock === 0 && "cursor-not-allowed opacity-70"
+              }`}
+              disabled={selectedStock === 0}
+            >
+              Add to bag
+            </button>
+          </form>
         </div>
       </div>
     </Container>
