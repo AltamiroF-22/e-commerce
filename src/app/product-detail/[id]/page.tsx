@@ -1,13 +1,14 @@
 "use client";
 
-import Button from "@/app/components/Button";
 import Container from "@/app/components/Container";
-import { StarIcon } from "@heroicons/react/16/solid";
 import axios from "axios";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import Sizes from "./components/Sizes";
+import Colors from "./components/Colors";
+import Review from "./components/Reviews";
 
 interface ProductDetail {
   id: string;
@@ -40,18 +41,26 @@ interface ProductDetail {
 }
 
 const ProductDetails = () => {
+  const [selectedColor, setSelectedColor] = useState<string>("");
+  const [selectedSize, setSelectedSize] = useState<string>("");
+  const [selectedSizeName, setSelectedSizeName] = useState<string>("");
+  const [selectedColorName, setSelectedColorName] = useState<string>("");
+  const [selectedStock, setSelectedStock] = useState<number>(0);
   const [productDetail, setProductDetail] = useState<ProductDetail | null>(
     null
   );
-  const [selectedColor, setSelectedColor] = useState<string>("");
   const [availableSizes, setAvailableSizes] =
     useState<[{ sizeId: string; sizeName: string }]>();
-  const [selectedStock, setSelectedStock] = useState<number>(0);
 
-  const { register, handleSubmit, watch } = useForm();
-  const selectedSize = watch("size");
+  const { handleSubmit } = useForm();
 
-  const handleColorSelection = (colorId: string) => {
+  const handleColorSelection = (
+    colorId: string | undefined,
+    colorName: string | undefined
+  ) => {
+    if (!colorId || !colorName)
+      return console.error("error no color id do productdetail");
+
     const filter = productDetail?.variants
       .filter((variant) => variant.colorId === colorId && variant.stock > 0)
       .map((variant) => ({
@@ -61,6 +70,12 @@ const ProductDetails = () => {
 
     setAvailableSizes(filter);
     setSelectedColor(colorId);
+    setSelectedColorName(colorName);
+  };
+
+  const handleSizeSelection = (sizeID: string, sizeName: string) => {
+    setSelectedSize(sizeID);
+    setSelectedSizeName(sizeName);
   };
 
   useEffect(() => {
@@ -78,14 +93,6 @@ const ProductDetails = () => {
   ).map((colorId) =>
     productDetail?.variants.find((variant) => variant.colorId === colorId)
   );
-
-  const product = {
-    rating: 3.9,
-  };
-
-  function classNames(...classes: any) {
-    return classes.filter(Boolean).join(" ");
-  }
 
   const params = useParams();
   const id = params?.id;
@@ -105,10 +112,12 @@ const ProductDetails = () => {
 
   if (!productDetail) return null;
 
-  const onSubmit = (data: any) => {
+  const onSubmit = () => {
     console.log({
       productID: productDetail.id,
-      sizeID: data.size,
+      sizeName: selectedSizeName,
+      colorName: selectedColorName,
+      sizeID: selectedSize,
       colorID: selectedColor,
     });
     // Adicione aqui a lógica para lidar com a seleção de tamanho
@@ -146,7 +155,7 @@ const ProductDetails = () => {
           {productDetail.images.length >= 4 && (
             <div className="absolute w-full cursor-pointer h-full bg-black/60 z-[2] rounded-md flex items-center justify-center">
               <p className="text-white text-4xl font-bold tracking-wide">
-                {productDetail.images.length + 1}+
+                {productDetail.images.length}+
               </p>
             </div>
           )}
@@ -160,6 +169,7 @@ const ProductDetails = () => {
       </div>
 
       {/* Detalhes e seleção do produto */}
+
       <div className="flex gap-4 flex-col items-start md:flex-row">
         <div className="w-full">
           <h1 className="text-xl pb-2 text-zinc-900 font-semibold">
@@ -171,50 +181,15 @@ const ProductDetails = () => {
             <h1 className="text-xl pb-4 text-zinc-900 font-semibold">
               Reviews
             </h1>
-
-            <div className="">
-              <div className="flex">
-                <div className="relative h-10 w-10">
-                  <Image
-                    src={
-                      "https://i.pinimg.com/originals/89/43/11/89431156d5b3cb697e6a11adadb57438.gif"
-                    }
-                    alt="default gif"
-                    fill
-                    className="object-cover object-center rounded-full"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-sm ml-2 font-bold">Ashley F-22</span>
-                  <div className="">
-                    <h4 className="sr-only">Reviews</h4>
-
-                    <div className="flex items-center ml-2">
-                      {[0, 1, 2, 3, 4].map((rating) => (
-                        <StarIcon
-                          key={rating}
-                          aria-hidden="true"
-                          className={classNames(
-                            product.rating > rating
-                              ? "text-gray-900"
-                              : "text-gray-200",
-                            "h-4 w-4 flex-shrink-0"
-                          )}
-                        />
-                      ))}
-                    </div>
-                    <p className="sr-only">{product.rating} out of 5 stars</p>
-                  </div>
-                </div>
-              </div>
-              <p className="mt-3 ml-2 text-sm italic text-zinc-600">
-                this is a default review :) Lorem ipsum dolor sit amet
-                consectetur adipisicing elit. Delectus consequatur quia quasi
-                labore adipisci soluta magnam atque sapiente, omnis, nobis
-                recusandae harum voluptatem aspernatur sint esse ratione iste
-                aliquid obcaecati?
-              </p>
-            </div>
+            <Review
+              reviweRating={4}
+              userName="Ashley F-22"
+              userImage="https://i.pinimg.com/originals/89/43/11/89431156d5b3cb697e6a11adadb57438.gif"
+              userReview="this is a default review :) Lorem ipsum dolor sit amet consectetur
+        adipisicing elit. Delectus consequatur quia quasi labore adipisci soluta
+        magnam atque sapiente, omnis, nobis recusandae harum voluptatem
+        aspernatur sint esse ratione iste aliquid obcaecati?"
+            />
           </div>
         </div>
 
@@ -223,26 +198,15 @@ const ProductDetails = () => {
           <p>Color</p>
           <div className="flex gap-2 mb-7 mt-1">
             {uniqueColors.map((variant) => (
-              <label
+              <Colors
                 key={variant?.colorId}
-                htmlFor={`color-${variant?.colorId}`}
-                className="cursor-pointer"
-              >
-                <input
-                  type="radio"
-                  id={`color-${variant?.colorId}`}
-                  value={variant?.colorId}
-                  className="hidden"
-                  checked={selectedColor === variant?.colorId}
-                  onChange={() => handleColorSelection(variant?.colorId)}
-                />
-                <div
-                  style={{ background: `${variant?.color.name}` }}
-                  className={`w-8 h-8 border rounded-full ${
-                    selectedColor === variant?.colorId && "border-blue-600"
-                  }`}
-                ></div>
-              </label>
+                colorId={variant?.colorId}
+                selectedColor={selectedColor}
+                colorName={variant?.color.name}
+                handleColorSelection={() =>
+                  handleColorSelection(variant?.colorId, variant?.color.name)
+                }
+              />
             ))}
           </div>
 
@@ -250,28 +214,15 @@ const ProductDetails = () => {
             <p>Size</p>
             <div className="w-full grid xl:max-w-[300px] gap-2 grid-cols-3 xl:grid-cols-4 my-2">
               {availableSizes?.map((product) => (
-                <label
+                <Sizes
                   key={product.sizeId}
-                  htmlFor={`size-${product.sizeId}`}
-                  className="cursor-pointer w-full"
-                >
-                  <input
-                    type="radio"
-                    id={`size-${product.sizeId}`}
-                    {...register("size")}
-                    value={product.sizeId}
-                    className="hidden"
-                  />
-                  <div
-                    className={`border py-4 flex items-center justify-center rounded-md ${
-                      selectedSize === product.sizeId
-                        ? "border-blue-600"
-                        : "border-gray-300"
-                    }`}
-                  >
-                    {product.sizeName}
-                  </div>
-                </label>
+                  sizeId={product.sizeId}
+                  sizeName={product.sizeName}
+                  selectedSize={selectedSize}
+                  handleSizeSelection={() =>
+                    handleSizeSelection(product.sizeId, product.sizeName)
+                  }
+                />
               ))}
             </div>
 
