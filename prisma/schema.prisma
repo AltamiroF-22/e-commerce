@@ -43,7 +43,7 @@ model EComerceUser {
   email             String     @unique
   gender            Gender?
   password          String
-  wallet            Float      @default(500)
+  wallet            Float      @default(500) @db.Double
   picture           String?
   role              Role       @default(CUSTOMER)
   favoritesProducts String[]   @db.ObjectId
@@ -77,7 +77,7 @@ model Orders {
   paymentStatus     PaymentStatus @default(PENDING)
   orderStatus       OrderStatus   @default(PENDING)
   orderDate         DateTime      @default(now())
-  totalAmount       Float
+  totalAmount       Float         @db.Double
   shippingAddressId String?       @db.ObjectId
   shippingAddress   Address?      @relation(fields: [shippingAddressId], references: [id])
   orderItems        OrderItem[]
@@ -169,7 +169,7 @@ model OrderItem {
   variantId String         @db.ObjectId
   variant   ProductVariant @relation(fields: [variantId], references: [id])
   quantity  Int
-  price     Float
+  price     Float          @db.Double
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
 }
