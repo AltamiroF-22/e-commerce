@@ -9,6 +9,7 @@ import CreateModal from "./components/modals/CreateModal";
 import getCurrentUser from "./actions/getCurrentUser";
 import Navbar from "./components/navbar/Navbar";
 import { SafeUser } from "./types";
+import ReviewModal from "./product-detail/[id]/components/ReviewModal";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -35,6 +36,7 @@ export default async function RootLayout({
           <Navbar currentUser={currentUser as SafeUser} />
           <LoginModal />
           <CreateModal />
+          <ReviewModal/>
         </div>
 
         <div className="pb-28 pt-28">

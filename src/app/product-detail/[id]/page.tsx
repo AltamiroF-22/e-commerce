@@ -9,6 +9,8 @@ import { useForm } from "react-hook-form";
 import Sizes from "./components/Sizes";
 import Colors from "./components/Colors";
 import Review from "./components/Reviews";
+import { FiPlus } from "react-icons/fi";
+import useReviewModal from "@/app/hooks/useReviewModal";
 
 interface ProductDetail {
   id: string;
@@ -41,6 +43,8 @@ interface ProductDetail {
 }
 
 const ProductDetails = () => {
+  const reviewModal = useReviewModal();
+
   const [selectedColor, setSelectedColor] = useState<string>("");
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [selectedSizeName, setSelectedSizeName] = useState<string>("");
@@ -190,6 +194,16 @@ const ProductDetails = () => {
         magnam atque sapiente, omnis, nobis recusandae harum voluptatem
         aspernatur sint esse ratione iste aliquid obcaecati?"
             />
+            <hr className="mt-7" />
+            <div className="w-full flex justify-center items-center py-4 mt-1">
+              <button
+                onClick={() => reviewModal.onOpen()}
+                className="flex justify-center items-center hover:border-b hover:border-zinc-800 transition"
+              >
+                <p className="text-zinc-950 text-sm pr-1"> Add review </p>
+                <FiPlus className="text-zinc-950 text-sm" />
+              </button>
+            </div>
           </div>
         </div>
 
