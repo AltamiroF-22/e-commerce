@@ -40,9 +40,10 @@ enum OrderStatus {
 model EComerceUser {
   id                String     @id @default(auto()) @map("_id") @db.ObjectId
   name              String?
-  email             String    @unique
+  email             String     @unique
   gender            Gender?
   password          String
+  wallet            Float      @default(500)
   picture           String?
   role              Role       @default(CUSTOMER)
   favoritesProducts String[]   @db.ObjectId
@@ -57,11 +58,14 @@ model EComerceUser {
 }
 
 model Cart {
-  id        String       @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String       @db.ObjectId
-  user      EComerceUser @relation(fields: [userId], references: [id])
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  id              String       @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String       @db.ObjectId
+  productQuantity Int
+  productId       String      @db.ObjectId
+  product         Products     @relation(fields: [productId], references: [id])
+  user            EComerceUser @relation(fields: [userId], references: [id])
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
 
   @@index([userId])
 }
@@ -124,6 +128,7 @@ model Products {
   variants       ProductVariant[]
   EComerceUser   EComerceUser?    @relation(fields: [eComerceUserId], references: [id])
   eComerceUserId String?          @db.ObjectId
+  Cart           Cart[]
 }
 
 model Color {
@@ -172,11 +177,11 @@ model OrderItem {
 model Review {
   id        String       @id @default(auto()) @map("_id") @db.ObjectId
   productId String       @db.ObjectId
-  product   Products     @relation(fields: [productId], references: [id])
   userId    String       @db.ObjectId
-  user      EComerceUser @relation(fields: [userId], references: [id])
   rating    Int
   comment   String?
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
+  product   Products     @relation(fields: [productId], references: [id])
+  user      EComerceUser @relation(fields: [userId], references: [id])
 }
