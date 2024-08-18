@@ -1,10 +1,9 @@
 "use client";
 
 import useCartModal from "@/app/hooks/useCartModal";
-import Colors from "@/app/product-detail/[id]/components/Colors";
 import Image from "next/image";
 import { useState } from "react";
-import { FiX } from "react-icons/fi";
+import { FiMinusCircle, FiX } from "react-icons/fi";
 
 const CartModal = () => {
   const cartComponent = useCartModal();
@@ -15,10 +14,10 @@ const CartModal = () => {
   }
 
   return (
-    <main className=" z-[2] fixed h-[100dvh] w-full bg-zinc-950/40  flex justify-end mt-20">
+    <main className=" z-[4] fixed h-[100dvh] w-full bg-zinc-950/40  flex justify-end mt-20">
       <div
         style={{ maxHeight: "calc(100dvh - 5em)" }}
-        className={`overflow-y-auto overflow-x-hidden duration-300 `}
+        className={`overflow-y-auto overflow-x-hidden`}
       >
         <aside
           style={{ minHeight: "calc(100dvh - 5em)" }}
@@ -35,12 +34,12 @@ const CartModal = () => {
             </button>
           </nav>
 
-          <div className="w-full flex items-center justify-between gap-2">
+          <div className=" relative w-full flex items-center justify-between gap-2">
             <div className="flex gap-2">
-              <div className="relative xl:h-[10dvw] xl:w-[10dvw]">
+              <div className="relative h-[30dvw] w-[30dvw]  md:h-[17dvw] md:w-[17dvw]  xl:h-[10dvw] xl:w-[10dvw]">
                 <Image
                   src={
-                    "https://i.pinimg.com/564x/84/bd/ab/84bdab758e4995a73261ede705d1cec0.jpg"
+                    "https://res.cloudinary.com/dxmehwz3f/image/upload/v1722911043/w3icxp1ov50iw9nfp7vc.webp"
                   }
                   fill
                   alt="product-image"
@@ -48,6 +47,10 @@ const CartModal = () => {
                 />
               </div>
               <div className="flex flex-col justify-between">
+                <button className=" absolute left-1 top-1 transition text-zinc-900 hover:text-rose-600">
+                  <FiMinusCircle />
+                  <p className="sr-only">remove</p>
+                </button>
                 <div className="">
                   <h2 className=" text-zinc-900 mb-1 ">Nomad Tumber</h2>
                   <div className="flex gap-2 items-center">
@@ -61,7 +64,7 @@ const CartModal = () => {
                 <p className="text-slate-600 text-sm">In stock</p>
               </div>
             </div>
-            <div className="">
+            <div className="flex flex-col-reverse justify-between h-[30dvw]  md:h-[17dvw] xl:h-[10dvw]">
               <select
                 value={quantity}
                 className="border rounded-md p-1"
@@ -75,15 +78,9 @@ const CartModal = () => {
                   </option>
                 ))}
               </select>
+              <p className="">${quantity * 35 /** toFixed(2) */}</p>
             </div>
-            <div className="">${quantity * 35}</div>
           </div>
-          <p className="bg-orange-400 h-[24dvh]">cart</p>
-          <p className="bg-orange-400 h-[24dvh]">cart</p>
-          <p className="bg-orange-400 h-[24dvh]">cart</p>
-          <p className="bg-orange-400 h-[24dvh]">cart</p>
-          <p className="bg-orange-400 h-[24dvh]">cart</p>
-          <p className="bg-orange-400 h-[24dvh]">cart</p>
         </aside>
       </div>
     </main>
