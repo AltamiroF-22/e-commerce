@@ -6,6 +6,7 @@ import Logo from "./Logo";
 import MenuOptions from "./MenuOptions";
 import { SafeUser } from "@/app/types";
 import { RiShoppingBagLine } from "react-icons/ri";
+import useCartModal from "@/app/hooks/useCartModal";
 
 interface NavbarProps {
   currentUser: SafeUser | null;
@@ -13,6 +14,12 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
   const [navBorder, setNavBorder] = useState<boolean>(false);
+  const cartmodal = useCartModal();
+
+  const hanleToggleCartModal = () => {
+    if (cartmodal.isOpen) return cartmodal.onClose();
+    cartmodal.onOpen();
+  };
 
   useEffect(() => {
     const closeMenuOnScroll = () => {
@@ -31,13 +38,10 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
     };
   }, []);
 
-  const openShoppingcart = () => {
-    alert("shoping cart accessible");
-  };
   return (
     <nav
       className={`p-5 xl:px-20  fixed w-full bg-white z-10 ${
-        navBorder ? "border-b shadow-sm" : ""
+        navBorder && "border-b shadow-sm"
       } `}
     >
       <div className="flex flex-row items-center justify-between gap-3 md:gap-0">
@@ -57,10 +61,10 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
         <div className="flex items-center gap-7">
           <button
             onClick={() => {
-              alert("para fazer");
-              currentUser && openShoppingcart();
+              currentUser && hanleToggleCartModal();
             }}
           >
+            <p className=" sr-only">cart</p>
             <RiShoppingBagLine
               className={`text-zinc-800 text-2xl hover:opacity-85 transition ${
                 currentUser

@@ -43,30 +43,10 @@ export async function GET(req: Request, { params }: { params: IDParams }) {
   }
 }
 
-// import { NextResponse } from "next/server";
-// import prisma from "@/app/libs/prismadb";
+/** pegar user e ver se o id do produto consta no historico de compra se sim pode review se n, n
+ * 
+ */
+export async function POST(req: Request, { params }: { params: IDParams }) {
 
-// interface IDParams {
-//   productId: string;
-// }
-// export async function GET(req: Request, { params }: { params: IDParams }) {
-//   const { productId } = params;
-
-//   console.log(`-----------------product id here: ${productId}`);
-
-//   if (!productId) {
-//     return NextResponse.json({ error: "ID is required" }, { status: 400 });
-//   }
-
-//   const product = await prisma.products.findUnique({
-//     where: {
-//       id: productId,
-//     },
-//   });
-
-//   if (!product) {
-//     return NextResponse.json({ error: "Product not found" }, { status: 404 });
-//   }
-
-//   return NextResponse.json(product);
-// }
+  const body = await req.json();
+}
