@@ -60,11 +60,15 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
 
         <div className="flex items-center gap-7">
           <button
+            className="relative"
             onClick={() => {
               currentUser && hanleToggleCartModal();
             }}
           >
-            <p className=" sr-only">cart</p>
+            <div className="h-4 w-4 rounded-full top-[-8px] right-[-8px] absolute bg-black flex items-center justify-center">
+              <p className="text-[10px] text-white">1</p>
+            </div>
+            <p className="sr-only">cart</p>
             <RiShoppingBagLine
               className={`text-zinc-800 text-2xl hover:opacity-85 transition ${
                 currentUser

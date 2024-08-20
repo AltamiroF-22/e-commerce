@@ -37,7 +37,6 @@ const CreateModal = () => {
         loginModal.onOpen();
       })
       .catch((error: any) => {
-        // Verifica se há uma resposta do servidor e exibe a mensagem de erro apropriada
         if (
           error.response &&
           error.response.data &&

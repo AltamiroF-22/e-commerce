@@ -11,6 +11,7 @@ import Colors from "./components/Colors";
 import Review from "./components/Reviews";
 import { FiPlus } from "react-icons/fi";
 import useReviewModal from "@/app/hooks/useReviewModal";
+import toast from "react-hot-toast";
 
 interface ProductDetail {
   id: string;
@@ -116,15 +117,29 @@ const ProductDetails = () => {
 
   if (!productDetail) return null;
 
-  const onSubmit = () => {
-    console.log({
-      productID: productDetail.id,
+  const onSubmit = async () => {
+    const data = {
+      productId: productDetail.id,
       sizeName: selectedSizeName,
       colorName: selectedColorName,
-      sizeID: selectedSize,
-      colorID: selectedColor,
-    });
-    // Adicione aqui a lógica para lidar com a seleção de tamanho
+      sizeId: selectedSize,
+      colorId: selectedColor,
+      productImage: productDetail.mainImage,
+      productPrice: productDetail.price,
+    };
+
+    try {
+      await axios.post(`/api/product/`, data);
+      toast.success("Product added to the cart");
+    } catch (error: any) {
+      console.log(error);
+
+      if (error.response && error.response.data && error.response.data.error) {
+        toast.error(error.response.data.error);
+      } else {
+        toast.error("Something went wrong!");
+      }
+    }
   };
 
   return (
@@ -207,7 +222,7 @@ const ProductDetails = () => {
           </div>
         </div>
 
-        <div className="md:w-[50%]">
+        <div className=" w-full md:w-[50%]">
           <p className="mb-7">${productDetail.price.toFixed(2)}</p>
           <p>Color</p>
           <div className="flex gap-2 mb-7 mt-1">

@@ -60,13 +60,19 @@ model EComerceUser {
 model Cart {
   id              String       @id @default(auto()) @map("_id") @db.ObjectId
   userId          String       @db.ObjectId
-  productQuantity Int
-  productId       String      @db.ObjectId
-  product         Products     @relation(fields: [productId], references: [id])
-  user            EComerceUser @relation(fields: [userId], references: [id])
+  productQuantity Int          @default(1)
+  sizeName        String
+  sizeId          String       @db.ObjectId
+  colorName       String
+  colorId         String       @db.ObjectId
+  productId       String       @db.ObjectId
+  productImage    String
+  productPrice    Float        @db.Double
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
-
+  
+  product         Products     @relation(fields: [productId], references: [id])
+  user            EComerceUser @relation(fields: [userId], references: [id])
   @@index([userId])
 }
 

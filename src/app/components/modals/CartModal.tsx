@@ -1,17 +1,68 @@
 "use client";
 
 import useCartModal from "@/app/hooks/useCartModal";
-import Image from "next/image";
-import { useState } from "react";
-import { FiMinusCircle, FiX } from "react-icons/fi";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { FiX } from "react-icons/fi";
+import CartItem from "./CartItem";
+import toast from "react-hot-toast";
+
+interface CartItemsProps {
+  colorId: string;
+  colorName: string;
+  sizeId: string;
+  sizeName: string;
+  userId: string;
+  id: string;
+  productId: string;
+  productImage: string;
+  productPrice: number;
+  productQuantity: number;
+
+  product: {
+    category?: string;
+    title: string;
+  };
+}
 
 const CartModal = () => {
   const cartComponent = useCartModal();
   const [quantity, setQuantity] = useState<number>(1);
+  const [CartItems, setCartItems] = useState<CartItemsProps[]>([]);
+
+  const getCartItems = async () => {
+    try {
+      const response = await axios.get("/api/cart");
+      setCartItems(response.data);
+      console.log(response.data);
+    } catch (err) {
+      console.error("Failed to fetch cart items:", err);
+    }
+  };
+
+  useEffect(() => {
+    getCartItems();
+  }, [cartComponent.isOpen]);
 
   if (!cartComponent.isOpen) {
     return null;
   }
+
+  const handleDeleteCartItem = async (productId: string) => {
+    try {
+      const response = await axios.delete("/api/cart", {
+        data: { productId },
+      });
+
+      if (response.status === 200) {
+        toast.success("Item deleted successfully");
+
+        setCartItems(CartItems.filter((item) => item.id !== productId));
+      }
+    } catch (error) {
+      console.error("Failed to delete cart item:", error);
+    }
+  };
 
   return (
     <main className=" z-[4] fixed h-[100dvh] w-full bg-zinc-950/40  flex justify-end mt-20">
@@ -21,65 +72,98 @@ const CartModal = () => {
       >
         <aside
           style={{ minHeight: "calc(100dvh - 5em)" }}
-          className=" w-[100vw] md:w-[70dvw] xl:w-[40dvw] flex flex-col gap-3 bg-white p-4 pt-6"
+          className=" w-[100vw] md:w-[70dvw] xl:w-[40dvw] flex flex-col justify-between gap-3  bg-white p-4 pt-6"
         >
-          <nav className="flex items-center w-full justify-between pt-2 mb-6 pb-4 ">
-            <h1 className="text-zinc-950 text-base">Shopping Cart</h1>
-            <button
-              onClick={() => cartComponent.onClose()}
-              className="flex items-center justify-center transition text-zinc-950 hover:text-zinc-600"
-            >
-              <FiX className="text-2xl " />
-              <p className="sr-only">close</p>
-            </button>
-          </nav>
-
-          <div className=" relative w-full flex items-center justify-between gap-2">
-            <div className="flex gap-2">
-              <div className="relative h-[30dvw] w-[30dvw]  md:h-[17dvw] md:w-[17dvw]  xl:h-[10dvw] xl:w-[10dvw]">
-                <Image
-                  src={
-                    "https://res.cloudinary.com/dxmehwz3f/image/upload/v1722911043/w3icxp1ov50iw9nfp7vc.webp"
-                  }
-                  fill
-                  alt="product-image"
-                  className=" object-cover object-center aspect-square"
-                />
-              </div>
-              <div className="flex flex-col justify-between">
-                <button className=" absolute left-1 top-1 transition text-zinc-900 hover:text-rose-600">
-                  <FiMinusCircle />
-                  <p className="sr-only">remove</p>
-                </button>
-                <div className="">
-                  <h2 className=" text-zinc-900 mb-1 ">Nomad Tumber</h2>
-                  <div className="flex gap-2 items-center">
-                    <p className="text-zinc-600 text-sm">Color</p>
-                    <div
-                      style={{ background: "#fff" }}
-                      className="w-5 h-5 rounded-full border"
-                    ></div>
-                  </div>
-                </div>
-                <p className="text-slate-600 text-sm">In stock</p>
-              </div>
-            </div>
-            <div className="flex flex-col-reverse justify-between h-[30dvw]  md:h-[17dvw] xl:h-[10dvw]">
-              <select
-                value={quantity}
-                className="border rounded-md p-1"
-                onChange={(e) => setQuantity(Number(e.target.value))}
-                name="quantity"
-                id="quantity"
+          <div className="flex flex-col gap-4 mb-6">
+            <nav className="flex items-center w-full justify-between py-6 sticky top-0 z-10 border-b bg-white ">
+              <h1 className="text-zinc-950 text-base">Shopping Cart</h1>
+              <button
+                onClick={() => cartComponent.onClose()}
+                className="flex items-center justify-center transition text-zinc-950 hover:text-zinc-600"
               >
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((op) => (
-                  <option key={op} value={op}>
-                    {op}
-                  </option>
+                <FiX className="text-xl " />
+                <p className="sr-only">close</p>
+              </button>
+            </nav>
+            {CartItems.length === 0 ? (
+              <div
+                style={{ minHeight: "calc(100dvh - 15em)" }}
+                className="flex flex-col items-center justify-center"
+              >
+                <p className="text-base text-zinc-900 text-center">
+                  You don't have products in your cart yet
+                </p>
+                <p
+                  className="text-sm cursor-pointer text-zinc-700 transition hover:underline"
+                  onClick={() => cartComponent.onClose()}
+                >{`Go shopping`}</p>
+              </div>
+            ) : (
+              <>
+                {CartItems.map((item) => (
+                  <>
+                    <CartItem
+                      key={item.id}
+                      id={item.id}
+                      imageSrc={item.productImage}
+                      productId={item.productId}
+                      productColor={item.colorName}
+                      productSize={item.sizeName}
+                      productQuantity={item.productQuantity}
+                      productTitle={item.product.title}
+                      ProductPrice={item.productPrice}
+                      remove={(productId) => {
+                        handleDeleteCartItem(productId);
+                      }}
+                    />
+                    <hr className="my-4" />
+                  </>
                 ))}
-              </select>
-              <p className="">${quantity * 35 /** toFixed(2) */}</p>
-            </div>
+
+                <footer>
+                  <div className="w-full">
+                    <div className="flex w-full justify-between gap-3">
+                      <p className="text-zinc-700 text-sm">Subtotal</p>
+                      <p className="text-sm">
+                        ${quantity * 35 /** toFixed(2) */}
+                      </p>
+                    </div>
+                    <hr className="my-3" />
+                    <div className="flex w-full justify-between gap-3">
+                      <p className="text-zinc-700 text-sm">Shipping</p>
+                      <p className="text-sm">
+                        ${quantity * 2 /** toFixed(2) */}
+                      </p>
+                    </div>
+                    <hr className="my-3" />
+                    <div className="flex w-full justify-between gap-3">
+                      <p className="text-zinc-700 text-sm">Total</p>
+                      <p className="text-sm">
+                        ${quantity * 2 + quantity * 35 /** toFixed(2) */}
+                      </p>
+                    </div>
+                    <hr className="my-3" />
+                  </div>
+                  <div className="w-full text-center">
+                    <button
+                      onClick={() => alert("to do")}
+                      className="p-3 bg-zinc-950 text-white w-full mb-2 hover:opacity-90 transition"
+                    >
+                      Checkout
+                    </button>
+                    <p className="text-zinc-600 text-sm">
+                      or{" "}
+                      <span
+                        onClick={() => cartComponent.onClose()}
+                        className="text-zinc-950 transition hover:underline cursor-pointer"
+                      >
+                        Continue Shopping
+                      </span>
+                    </p>
+                  </div>
+                </footer>
+              </>
+            )}
           </div>
         </aside>
       </div>
