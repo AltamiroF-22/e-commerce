@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Links from "./link";
 import Logo from "./Logo";
 import MenuOptions from "./MenuOptions";
 import { SafeUser } from "@/app/types";
 import { RiShoppingBagLine } from "react-icons/ri";
 import useCartModal from "@/app/hooks/useCartModal";
+import { useCart } from "@/app/context/CartContex"; // Importe o hook useCart
 
 interface NavbarProps {
   currentUser: SafeUser | null;
@@ -16,7 +17,10 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
   const [navBorder, setNavBorder] = useState<boolean>(false);
   const cartmodal = useCartModal();
 
-  const hanleToggleCartModal = () => {
+  // não ta att auto 
+  const { cartItems } = useCart();
+
+  const handleToggleCartModal = () => {
     if (cartmodal.isOpen) return cartmodal.onClose();
     cartmodal.onOpen();
   };
@@ -62,12 +66,15 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
           <button
             className="relative"
             onClick={() => {
-              currentUser && hanleToggleCartModal();
+              currentUser && handleToggleCartModal();
             }}
           >
-            <div className="h-4 w-4 rounded-full top-[-8px] right-[-8px] absolute bg-black flex items-center justify-center">
-              <p className="text-[10px] text-white">1</p>
-            </div>
+            {cartItems.length > 0 && (
+              <div className="h-4 w-4 rounded-full top-[-8px] right-[-8px] absolute bg-black flex items-center justify-center">
+                <p className="text-[10px] text-white">{cartItems.length}</p>
+              </div>
+            )}
+
             <p className="sr-only">cart</p>
             <RiShoppingBagLine
               className={`text-zinc-800 text-2xl hover:opacity-85 transition ${

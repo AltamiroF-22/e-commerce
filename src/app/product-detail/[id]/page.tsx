@@ -117,6 +117,9 @@ const ProductDetails = () => {
 
   if (!productDetail) return null;
 
+  /** antes de mandar o produto para o carrinho verificar if (id && color && size ) ja tem no carrinho do user logado
+   *  se ja tiver ou exibir msg de erro ou add + 1 no produto existente  */
+  
   const onSubmit = async () => {
     const data = {
       productId: productDetail.id,

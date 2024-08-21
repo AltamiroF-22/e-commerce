@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { FiX } from "react-icons/fi";
 import CartItem from "./CartItem";
 import toast from "react-hot-toast";
+import getCartItems from "@/app/actions/getCartItems";
 
 interface CartItemsProps {
   colorId: string;
@@ -16,6 +17,7 @@ interface CartItemsProps {
   id: string;
   productId: string;
   productImage: string;
+
   productPrice: number;
   productQuantity: number;
 
@@ -27,22 +29,27 @@ interface CartItemsProps {
 
 const CartModal = () => {
   const cartComponent = useCartModal();
-  const [quantity, setQuantity] = useState<number>(1);
   const [CartItems, setCartItems] = useState<CartItemsProps[]>([]);
+  const [opSelected, setOpSelected] = useState<number | null>(0);
 
-  const getCartItems = async () => {
-    try {
-      const response = await axios.get("/api/cart");
-      setCartItems(response.data);
-      console.log(response.data);
-    } catch (err) {
-      console.error("Failed to fetch cart items:", err);
-    }
+  const subTotal = CartItems.reduce(
+    (accumulator: number, item: CartItemsProps) => {
+      return accumulator + item.productPrice * item.productQuantity;
+    },
+    0
+  );
+
+  const shipping = (subTotal / 8) * 0.75; 
+  
+  const cartItems = async () => {
+    const getCartItem = await getCartItems();
+    setCartItems(getCartItem);
+    setOpSelected(null);
   };
 
   useEffect(() => {
-    getCartItems();
-  }, [cartComponent.isOpen]);
+    cartItems();
+  }, [cartComponent.isOpen, opSelected]);
 
   if (!cartComponent.isOpen) {
     return null;
@@ -55,8 +62,7 @@ const CartModal = () => {
       });
 
       if (response.status === 200) {
-        toast.success("Item deleted successfully");
-
+        toast.success("Item removed successfully");
         setCartItems(CartItems.filter((item) => item.id !== productId));
       }
     } catch (error) {
@@ -99,47 +105,51 @@ const CartModal = () => {
                 >{`Go shopping`}</p>
               </div>
             ) : (
-              <>
-                {CartItems.map((item) => (
-                  <>
-                    <CartItem
-                      key={item.id}
-                      id={item.id}
-                      imageSrc={item.productImage}
-                      productId={item.productId}
-                      productColor={item.colorName}
-                      productSize={item.sizeName}
-                      productQuantity={item.productQuantity}
-                      productTitle={item.product.title}
-                      ProductPrice={item.productPrice}
-                      remove={(productId) => {
-                        handleDeleteCartItem(productId);
-                      }}
-                    />
-                    <hr className="my-4" />
-                  </>
-                ))}
+              <div
+                style={{ minHeight: "calc(100dvh - 15em)" }}
+                className="flex flex-col justify-between"
+              >
+                <div className="">
+                  {CartItems.map((item) => (
+                    <>
+                      <CartItem
+                        key={item.id}
+                        id={item.id}
+                        imageSrc={item.productImage}
+                        productId={item.productId}
+                        productColor={item.colorName}
+                        productSize={item.sizeName}
+                        productQuantity={item.productQuantity}
+                        productTitle={item.product.title}
+                        ProductPrice={item.productPrice}
+                        opSelected={(op) =>
+                          setOpSelected(op * item.productPrice)
+                        }
+                        remove={(productId) => {
+                          handleDeleteCartItem(productId);
+                        }}
+                      />
+                      <hr className="my-4" />
+                    </>
+                  ))}
+                </div>
 
                 <footer>
                   <div className="w-full">
                     <div className="flex w-full justify-between gap-3">
                       <p className="text-zinc-700 text-sm">Subtotal</p>
-                      <p className="text-sm">
-                        ${quantity * 35 /** toFixed(2) */}
-                      </p>
+                      <p className="text-sm">${subTotal.toFixed(2)}</p>
                     </div>
                     <hr className="my-3" />
                     <div className="flex w-full justify-between gap-3">
                       <p className="text-zinc-700 text-sm">Shipping</p>
-                      <p className="text-sm">
-                        ${quantity * 2 /** toFixed(2) */}
-                      </p>
+                      <p className="text-sm">${shipping.toFixed(2)}</p>
                     </div>
                     <hr className="my-3" />
                     <div className="flex w-full justify-between gap-3">
                       <p className="text-zinc-700 text-sm">Total</p>
                       <p className="text-sm">
-                        ${quantity * 2 + quantity * 35 /** toFixed(2) */}
+                        ${(subTotal + shipping).toFixed(2)}
                       </p>
                     </div>
                     <hr className="my-3" />
@@ -162,7 +172,7 @@ const CartModal = () => {
                     </p>
                   </div>
                 </footer>
-              </>
+              </div>
             )}
           </div>
         </aside>

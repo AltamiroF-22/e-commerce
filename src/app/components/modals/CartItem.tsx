@@ -14,6 +14,7 @@ interface CartItemProps {
   productQuantity: number;
   ProductPrice: number;
   remove: (cartId: string) => void;
+  opSelected: (op: number) => void;
   onQuantityChange?: (productId: string, newQuantity: number) => void;
 }
 
@@ -28,6 +29,7 @@ const CartItem: React.FC<CartItemProps> = ({
   ProductPrice,
   id,
   onQuantityChange,
+  opSelected,
 }) => {
   const [localQuantity, setLocalQuantity] = useState<number>(productQuantity);
 
@@ -100,7 +102,10 @@ const CartItem: React.FC<CartItemProps> = ({
         <select
           value={localQuantity}
           className="border rounded-md p-1 cursor-pointer"
-          onChange={(e) => setQuantity(Number(e.target.value))}
+          onChange={(e) => {
+            setQuantity(Number(e.target.value)),
+              opSelected(Number(e.target.value));
+          }}
           name={productId}
           id={productId}
         >
