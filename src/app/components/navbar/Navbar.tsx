@@ -7,7 +7,7 @@ import MenuOptions from "./MenuOptions";
 import { SafeUser } from "@/app/types";
 import { RiShoppingBagLine } from "react-icons/ri";
 import useCartModal from "@/app/hooks/useCartModal";
-import { useCart } from "@/app/context/CartContex"; // Importe o hook useCart
+import { useCart } from "@/app/context/CartContex";
 
 interface NavbarProps {
   currentUser: SafeUser | null;
@@ -17,7 +17,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
   const [navBorder, setNavBorder] = useState<boolean>(false);
   const cartmodal = useCartModal();
 
-  // não ta att auto 
+  // não ta att auto
   const { cartItems } = useCart();
 
   const handleToggleCartModal = () => {
@@ -56,13 +56,13 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
             currentUser={currentUser}
           />
           <Links label="orders" path="/orders" currentUser={currentUser} />
-          <Links label="trancking" path="/tracking" currentUser={currentUser} />
+          {/* <Links label="trancking" path="/tracking" currentUser={currentUser} /> */}
           <Links label="wishlist" path="/wishlist" currentUser={currentUser} />
         </ul>
 
         <Logo bigLogo />
 
-        <div className="flex items-center gap-7">
+        <div className="flex items-center gap-5">
           <button
             className="relative"
             onClick={() => {
@@ -84,6 +84,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
               }`}
             />
           </button>
+          
           <MenuOptions currentUser={currentUser} />
         </div>
       </div>

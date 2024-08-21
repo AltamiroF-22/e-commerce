@@ -112,7 +112,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
                   label="Orders"
                 />
               </div>
-              <div className="flex md:hidden flex-col cursor-pointer">
+              <div className="flex flex-col cursor-pointer">
                 <MenuItem
                   onClick={() => {
                     router.push("/trancking");
@@ -128,6 +128,15 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
                     toggleOpen();
                   }}
                   label="Wishlist"
+                />
+              </div>
+              <div className="flex flex-col cursor-pointer">
+                <MenuItem
+                  onClick={() => {
+                    router.push("/wallet");
+                    toggleOpen();
+                  }}
+                  label={`+ $${currentUser.wallet.toFixed(2)}`}
                 />
               </div>
 
