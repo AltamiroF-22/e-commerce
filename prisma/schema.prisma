@@ -57,6 +57,27 @@ model EComerceUser {
   reviews           Review[]
 }
 
+model Address {
+  id              String       @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String       @db.ObjectId
+  user            EComerceUser @relation(fields: [userId], references: [id])
+  street          String //
+  city            String //
+  state           String //
+  postalCode      String //
+  country         String //
+  phoneNumber     String
+  houseNumber     String //
+  addressType     AddressType //
+  apartmentNumber String?
+  additionalInfo  String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  orders          Orders[]
+
+  @@index([userId])
+}
+
 model Cart {
   id              String       @id @default(auto()) @map("_id") @db.ObjectId
   userId          String       @db.ObjectId
@@ -96,26 +117,7 @@ model Orders {
   @@index([userId])
 }
 
-model Address {
-  id              String       @id @default(auto()) @map("_id") @db.ObjectId
-  userId          String       @db.ObjectId
-  user            EComerceUser @relation(fields: [userId], references: [id])
-  street          String
-  city            String
-  state           String
-  postalCode      String
-  country         String
-  phoneNumber     String
-  houseNumber     String
-  addressType     AddressType
-  apartmentNumber String?
-  additionalInfo  String?
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
-  orders          Orders[]
 
-  @@index([userId])
-}
 
 model Products {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId

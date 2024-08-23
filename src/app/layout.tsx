@@ -39,7 +39,7 @@ export default async function RootLayout({
             <Navbar currentUser={currentUser as SafeUser} />
             <LoginModal />
             <CreateModal />
-            <CartModal />
+            <CartModal currentUser={currentUser as SafeUser} />
             <ReviewModal />
           </div>
 

@@ -7,6 +7,9 @@ import { FiX } from "react-icons/fi";
 import CartItem from "./CartItem";
 import toast from "react-hot-toast";
 import getCartItems from "@/app/actions/getCartItems";
+import getCurrentUser from "@/app/actions/getCurrentUser";
+import { SafeUser } from "@/app/types";
+import { useRouter } from "next/navigation";
 
 interface CartItemsProps {
   colorId: string;
@@ -27,10 +30,11 @@ interface CartItemsProps {
   };
 }
 
-const CartModal = () => {
+const CartModal = ({ currentUser }: { currentUser: SafeUser }) => {
   const cartComponent = useCartModal();
   const [CartItems, setCartItems] = useState<CartItemsProps[]>([]);
   const [opSelected, setOpSelected] = useState<number | null>(0);
+  const router = useRouter();
 
   const subTotal = CartItems.reduce(
     (accumulator: number, item: CartItemsProps) => {
@@ -39,8 +43,8 @@ const CartModal = () => {
     0
   );
 
-  const shipping = (subTotal / 8) * 0.75; 
-  
+  const shipping = (subTotal / 8) * 0.75;
+
   const cartItems = async () => {
     const getCartItem = await getCartItems();
     setCartItems(getCartItem);
@@ -156,7 +160,9 @@ const CartModal = () => {
                   </div>
                   <div className="w-full text-center">
                     <button
-                      onClick={() => alert("to do")}
+                      onClick={() => {
+                        router.push("/checkout"), cartComponent.onClose();
+                      }}
                       className="p-3 bg-zinc-950 text-white w-full mb-2 hover:opacity-90 transition"
                     >
                       Checkout
