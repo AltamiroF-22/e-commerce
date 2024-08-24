@@ -4,6 +4,7 @@ import { FieldValues, useForm } from "react-hook-form";
 import Container from "../components/Container";
 import Input from "../components/inputs/Input";
 import Select from "../components/inputs/GenderSelect";
+import Button from "../components/Button";
 
 const Checkout = () => {
   const {
@@ -24,12 +25,16 @@ const Checkout = () => {
     },
   });
 
+  const onSubmit = async (data: any) => {
+    console.log(data);
+  };
+
   return (
     <Container>
-      <div className="w-full grid grid-cols-2">
-        <div className="px-2">
+      <div className="w-full grid md:grid-cols-2 mt-10">
+        <div className="px-2 xl:px-4">
           <h2 className="text-xl font-semibold text-zinc-700 mb-16">
-            Shipping Address
+            Add Shipping Address
           </h2>
           <div className="w-full  gap-2 grid grid-cols-4 gap-y-4">
             <div className=" col-span-2">
@@ -130,16 +135,30 @@ const Checkout = () => {
                 label="Additional Info"
                 label2="(optional)"
                 errors={errors}
-                register={register("additionalInfo", {
-                  required: "Additional info is required!",
-                })}
+                register={register("additionalInfo")}
                 id="additionalInfo"
               />
             </div>
+            <button //TODO: add disable
+              onClick={handleSubmit(onSubmit)}
+              type="submit"
+              className="col-span-4 p-4 bg-zinc-950 rounded-md text-white transition hover:bg-zinc-800"
+            >
+              Add address
+            </button>
           </div>
         </div>
 
-        <div className="bg-cyan-800"></div>
+        <div className="">
+          <h3 className="text-md font-semibold text-zinc-700 mb-16">
+            Or use a saved one
+          </h3>
+          <div className="border border-spacing-1 border-dashed rounded-md sticky top-[6em] ">
+            <p className="text-sm p-9 text-center text-zinc-600 italic ">
+              You don't have saved Addresses
+            </p>
+          </div>
+        </div>
       </div>
     </Container>
   );
