@@ -12,6 +12,7 @@ import Review from "./components/Reviews";
 import { FiPlus } from "react-icons/fi";
 import useReviewModal from "@/app/hooks/useReviewModal";
 import toast from "react-hot-toast";
+import { SafeUser } from "@/app/types";
 
 interface ProductDetail {
   id: string;
@@ -43,7 +44,7 @@ interface ProductDetail {
   ];
 }
 
-const ProductDetails = () => {
+const ProductDetails = ({ currentUser }: { currentUser: SafeUser }) => {
   const reviewModal = useReviewModal();
 
   const [selectedColor, setSelectedColor] = useState<string>("");
@@ -119,7 +120,7 @@ const ProductDetails = () => {
 
   /** antes de mandar o produto para o carrinho verificar if (id && color && size ) ja tem no carrinho do user logado
    *  se ja tiver ou exibir msg de erro ou add + 1 no produto existente  */
-  
+
   const onSubmit = async () => {
     const data = {
       productId: productDetail.id,
@@ -130,6 +131,10 @@ const ProductDetails = () => {
       productImage: productDetail.mainImage,
       productPrice: productDetail.price,
     };
+
+    if (!currentUser) {
+      return toast.error("You must be logged in!");
+    }
 
     try {
       await axios.post(`/api/product/`, data);

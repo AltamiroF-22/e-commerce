@@ -7,7 +7,6 @@ import { FiX } from "react-icons/fi";
 import CartItem from "./CartItem";
 import toast from "react-hot-toast";
 import getCartItems from "@/app/actions/getCartItems";
-import getCurrentUser from "@/app/actions/getCurrentUser";
 import { SafeUser } from "@/app/types";
 import { useRouter } from "next/navigation";
 
@@ -35,6 +34,8 @@ const CartModal = ({ currentUser }: { currentUser: SafeUser }) => {
   const [CartItems, setCartItems] = useState<CartItemsProps[]>([]);
   const [opSelected, setOpSelected] = useState<number | null>(0);
   const router = useRouter();
+
+  if (!currentUser) return null;
 
   const subTotal = CartItems.reduce(
     (accumulator: number, item: CartItemsProps) => {

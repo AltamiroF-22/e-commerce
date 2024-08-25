@@ -57,10 +57,16 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
         <div className="absolute rounded-xl shadow-md md:w-[20vw] w-[91dvw] bg-white overflow-hidden right-0  top-14 text-sm">
           {!currentUser && (
             <>
-              <div className="flex flex-col cursor-pointer">
+              <div
+                onClick={() => router.push("/")}
+                className="flex flex-col cursor-pointer"
+              >
                 <MenuItem onClick={loginModal.onOpen} label="Login" />
               </div>
-              <div className="flex flex-col cursor-pointer">
+              <div
+                onClick={() => router.push("/")}
+                className="flex flex-col cursor-pointer"
+              >
                 <MenuItem onClick={createModal.onOpen} label="Sign up" />
               </div>
             </>

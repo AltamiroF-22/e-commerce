@@ -4,9 +4,32 @@ import { FieldValues, useForm } from "react-hook-form";
 import Container from "../components/Container";
 import Input from "../components/inputs/Input";
 import Select from "../components/inputs/GenderSelect";
-import Button from "../components/Button";
+import axios from "axios";
+import toast from "react-hot-toast";
+import getAddresses from "../actions/getAddresses";
+import { useEffect, useState } from "react";
+import { FiTrash2 } from "react-icons/fi";
+
+interface AddressProps {
+  id: string;
+  userId: string;
+  street: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  phoneNumber: string;
+  houseNumber: string;
+  addressType: "WORK" | "HOME" | "OTHER";
+  apartmentNumber: string | null;
+  additionalInfo: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 const Checkout = () => {
+  const [addresses, setAddresses] = useState<AddressProps[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = useState<string>("");
   const {
     register,
     handleSubmit,
@@ -22,11 +45,37 @@ const Checkout = () => {
       addressType: "HOME",
       apartmentNumber: "",
       additionalInfo: "",
+      state: "",
     },
   });
 
+  useEffect(() => {
+    address();
+  }, []);
+
+  useEffect(() => {
+    if (addresses.length > 0) {
+      setSelectedAddressId(addresses[0].id);
+    }
+  }, [addresses]);
+
+  const address = async () => {
+    const address = await getAddresses();
+    if (!address) return;
+    setAddresses(address);
+  };
+
   const onSubmit = async (data: any) => {
-    console.log(data);
+    axios
+      .post("/api/checkout", data)
+      .then(() => {
+        toast.success("Address added");
+        address();
+      })
+      .catch((err) => {
+        toast.error("Something went wrong!");
+        console.log(err);
+      });
   };
 
   return (
@@ -154,9 +203,132 @@ const Checkout = () => {
             Or use a saved one
           </h3>
           <div className="border border-spacing-1 border-dashed rounded-md sticky top-[6em] ">
-            <p className="text-sm p-9 text-center text-zinc-600 italic ">
-              You don't have saved Addresses
-            </p>
+            {addresses.length === 0 && (
+              <p className="text-sm p-9 text-center text-zinc-600 italic ">
+                You don't have saved Addresses
+              </p>
+            )}
+            {addresses.length > 0 && (
+              <div className="text-sm flex gap-2 flex-col p-1 text-center">
+                {addresses.map((address) => (
+                  <label htmlFor={address.id} className="" key={address.id}>
+                    <input
+                      type="radio"
+                      id={address.id}
+                      value={address.id}
+                      className="hidden"
+                      checked={selectedAddressId === address.id}
+                      onChange={() => setSelectedAddressId(address.id)}
+                    />
+
+                    <div
+                      className={`border-2 p-3 rounded-md relative cursor-pointer text-start grid md:grid-cols-2 ${
+                        selectedAddressId === address.id && "border-blue-600"
+                      }`}
+                    >
+                      <button
+                        className="absolute right-1 top-2 hover:text-red-700 transition"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          alert(`Address to delete: ${address.id}`);
+                        }}
+                      >
+                        <FiTrash2 />
+                        <p className="sr-only">delete address</p>
+                      </button>
+
+                      <div className="flex flex-col gap-1">
+                        <p className="text-sm">
+                          Country:
+                          <span className="text-zinc-500 text-xs">
+                            {" "}
+                            {address.country}
+                          </span>
+                        </p>
+                        <p className="text-sm ">
+                          State:
+                          <span className="text-zinc-500 text-xs">
+                            {" "}
+                            {address.state}
+                          </span>
+                        </p>
+                        <p className="text-sm">
+                          City:
+                          <span className="text-zinc-500 text-xs">
+                            {" "}
+                            {address.city}
+                          </span>
+                        </p>
+
+                        <p className="text-sm">
+                          Postal Code:
+                          <span className="text-zinc-500 text-xs">
+                            {" "}
+                            {address.postalCode}
+                          </span>
+                        </p>
+                      </div>
+
+                      <div className="flex flex-col gap-1">
+                        <p className="text-sm">
+                          Phone Number:
+                          <span className="text-zinc-500 text-xs">
+                            {" "}
+                            {address.phoneNumber}
+                          </span>
+                        </p>
+
+                        <p className="text-sm">
+                          Street:
+                          <span className="text-zinc-500 text-xs">
+                            {" "}
+                            {address.street}
+                          </span>
+                        </p>
+                        <p className="text-sm">
+                          N°:
+                          <span className="text-zinc-500 text-xs">
+                            {" "}
+                            {address.houseNumber}
+                          </span>
+                        </p>
+                        {address.apartmentNumber &&
+                          address.apartmentNumber.trim().length > 0 && (
+                            <p className="text-sm">
+                              Apartment N°:
+                              <span className="text-zinc-500 text-xs">
+                                {" "}
+                                {address.apartmentNumber}
+                              </span>
+                            </p>
+                          )}
+                        <p className="text-sm">
+                          Address Type:
+                          <span className="text-zinc-500 text-xs">
+                            {" "}
+                            {address.addressType.slice(0, 1)}
+                            {address.addressType
+                              .slice(1, address.addressType.length)
+                              .toLowerCase()}
+                          </span>
+                        </p>
+
+                        {address.additionalInfo &&
+                          address.additionalInfo.trim().length > 0 && (
+                            <p className="text-sm">
+                              Addiotional Information:
+                              <span className="text-zinc-500 text-xs">
+                                {" "}
+                                {address.additionalInfo}
+                              </span>
+                            </p>
+                          )}
+                      </div>
+                    </div>
+                  </label>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
