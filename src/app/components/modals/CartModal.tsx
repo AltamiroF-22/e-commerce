@@ -35,7 +35,23 @@ const CartModal = ({ currentUser }: { currentUser: SafeUser }) => {
   const [opSelected, setOpSelected] = useState<number | null>(0);
   const router = useRouter();
 
-  if (!currentUser) return null;
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const fetchCartItems = async () => {
+      setOpSelected(null);
+      const getCartItem = await getCartItems();
+      setCartItems(getCartItem);
+    };
+
+    if (cartComponent.isOpen) {
+      fetchCartItems();
+    }
+  }, [currentUser, cartComponent.isOpen, opSelected]);
+
+  if (!cartComponent.isOpen || !currentUser) {
+    return null;
+  }
 
   const subTotal = CartItems.reduce(
     (accumulator: number, item: CartItemsProps) => {
@@ -45,20 +61,6 @@ const CartModal = ({ currentUser }: { currentUser: SafeUser }) => {
   );
 
   const shipping = (subTotal / 8) * 0.75;
-
-  const cartItems = async () => {
-    const getCartItem = await getCartItems();
-    setCartItems(getCartItem);
-    setOpSelected(null);
-  };
-
-  useEffect(() => {
-    cartItems();
-  }, [cartComponent.isOpen, opSelected]);
-
-  if (!cartComponent.isOpen) {
-    return null;
-  }
 
   const handleDeleteCartItem = async (productId: string) => {
     try {
