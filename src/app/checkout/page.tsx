@@ -9,6 +9,9 @@ import toast from "react-hot-toast";
 import getAddresses from "../actions/getAddresses";
 import { useEffect, useState } from "react";
 import { FiTrash2 } from "react-icons/fi";
+import { CartItemsProps } from "../components/modals/CartModal";
+import getCartItems from "../actions/getCartItems";
+import CartItem from "../components/modals/CartItem";
 
 interface AddressProps {
   id: string;
@@ -28,6 +31,9 @@ interface AddressProps {
 }
 
 const Checkout = () => {
+  const [CartItems, setCartItems] = useState<CartItemsProps[]>([]);
+
+  //////////
   const [addresses, setAddresses] = useState<AddressProps[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState<string>("");
   const {
@@ -50,11 +56,24 @@ const Checkout = () => {
     },
   });
 
-
-
   useEffect(() => {
     address();
+    const fetchCartItems = async () => {
+      const getCartItem = await getCartItems();
+      setCartItems(getCartItem);
+    };
+
+    fetchCartItems();
   }, []);
+
+  const subTotal = CartItems.reduce(
+    (accumulator: number, item: CartItemsProps) => {
+      return accumulator + item.productPrice * item.productQuantity;
+    },
+    0
+  );
+
+  const shipping = (subTotal / 8) * 0.75;
 
   useEffect(() => {
     if (addresses.length > 0) {
@@ -74,7 +93,7 @@ const Checkout = () => {
       .then(() => {
         toast.success("Address added");
         address();
-        reset()
+        reset();
       })
       .catch((err) => {
         toast.error("Something went wrong!");
@@ -97,9 +116,9 @@ const Checkout = () => {
 
   return (
     <Container>
-      <div className="w-full grid md:grid-cols-2 mt-10">
+      <div className="w-full grid gap-4 md:grid-cols-2 mt-10">
         <div className="px-2 xl:px-4">
-          <h2 className="text-xl font-semibold text-zinc-700 mb-16">
+          <h2 className="text-md font-semibold text-zinc-700 mb-16">
             Add Shipping Address
           </h2>
           <div className="w-full  gap-2 grid grid-cols-4 gap-y-4">
@@ -213,141 +232,177 @@ const Checkout = () => {
               Add address
             </button>
           </div>
-        </div>
 
-        <div className="">
-          <h3 className="text-md font-semibold text-zinc-700 mb-16">
-            Or use a saved one
-          </h3>
-          <div className="border border-spacing-1 border-dashed rounded-md sticky top-[6em] ">
-            {addresses.length === 0 && (
-              <p className="text-sm p-9 text-center text-zinc-600 italic ">
-                You don't have saved Addresses
-              </p>
-            )}
-            {addresses.length > 0 && (
-              <div className="text-sm flex gap-2 flex-col p-1 text-center">
-                {addresses.map((address) => (
-                  <label htmlFor={address.id} className="" key={address.id}>
-                    <input
-                      type="radio"
-                      id={address.id}
-                      value={address.id}
-                      className="hidden"
-                      checked={selectedAddressId === address.id}
-                      onChange={() => setSelectedAddressId(address.id)}
-                    />
+          {addresses.length > 0 && (
+            <div className="pt-5">
+              <h3 className="text-sm font-semibold text-zinc-700 text-center pb-5">
+                Or use a saved one
+              </h3>
+              <div className="top-[6em] ">
+                <div className="text-sm flex gap-2 flex-col p-1 text-center">
+                  {addresses.map((address) => (
+                    <label htmlFor={address.id} className="" key={address.id}>
+                      <input
+                        type="radio"
+                        id={address.id}
+                        value={address.id}
+                        className="hidden"
+                        checked={selectedAddressId === address.id}
+                        onChange={() => setSelectedAddressId(address.id)}
+                      />
 
-                    <div
-                      className={`border-2 p-3 rounded-md relative cursor-pointer text-start grid md:grid-cols-2 ${
-                        selectedAddressId === address.id && "border-blue-600"
-                      }`}
-                    >
-                      <button
-                        className="absolute right-1 top-2 hover:text-red-700 transition"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleDeleteAddress(address.id);
-                        }}
+                      <div
+                        className={`border-2 p-3 rounded-md relative cursor-pointer text-start grid md:grid-cols-2 ${
+                          selectedAddressId === address.id && "border-blue-600"
+                        }`}
                       >
-                        <FiTrash2 />
-                        <p className="sr-only">delete address</p>
-                      </button>
+                        <button
+                          className="absolute right-1 top-2 hover:text-red-700 transition"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleDeleteAddress(address.id);
+                          }}
+                        >
+                          <FiTrash2 />
+                          <p className="sr-only">delete address</p>
+                        </button>
 
-                      <div className="flex flex-col gap-1">
-                        <p className="text-sm">
-                          Country:
-                          <span className="text-zinc-500 text-xs">
-                            {" "}
-                            {address.country}
-                          </span>
-                        </p>
-                        <p className="text-sm ">
-                          State:
-                          <span className="text-zinc-500 text-xs">
-                            {" "}
-                            {address.state}
-                          </span>
-                        </p>
-                        <p className="text-sm">
-                          City:
-                          <span className="text-zinc-500 text-xs">
-                            {" "}
-                            {address.city}
-                          </span>
-                        </p>
+                        <div className="flex flex-col gap-1">
+                          <p className="text-sm">
+                            Country:
+                            <span className="text-zinc-500 text-xs">
+                              {" "}
+                              {address.country}
+                            </span>
+                          </p>
+                          <p className="text-sm ">
+                            State:
+                            <span className="text-zinc-500 text-xs">
+                              {" "}
+                              {address.state}
+                            </span>
+                          </p>
+                          <p className="text-sm">
+                            City:
+                            <span className="text-zinc-500 text-xs">
+                              {" "}
+                              {address.city}
+                            </span>
+                          </p>
 
-                        <p className="text-sm">
-                          Postal Code:
-                          <span className="text-zinc-500 text-xs">
-                            {" "}
-                            {address.postalCode}
-                          </span>
-                        </p>
+                          <p className="text-sm">
+                            Postal Code:
+                            <span className="text-zinc-500 text-xs">
+                              {" "}
+                              {address.postalCode}
+                            </span>
+                          </p>
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                          <p className="text-sm">
+                            Phone Number:
+                            <span className="text-zinc-500 text-xs">
+                              {" "}
+                              {address.phoneNumber}
+                            </span>
+                          </p>
+
+                          <p className="text-sm">
+                            Street:
+                            <span className="text-zinc-500 text-xs">
+                              {" "}
+                              {address.street}
+                            </span>
+                          </p>
+                          <p className="text-sm">
+                            N°:
+                            <span className="text-zinc-500 text-xs">
+                              {" "}
+                              {address.houseNumber}
+                            </span>
+                          </p>
+                          {address.apartmentNumber &&
+                            address.apartmentNumber.trim().length > 0 && (
+                              <p className="text-sm">
+                                Apartment N°:
+                                <span className="text-zinc-500 text-xs">
+                                  {" "}
+                                  {address.apartmentNumber}
+                                </span>
+                              </p>
+                            )}
+                          <p className="text-sm">
+                            Address Type:
+                            <span className="text-zinc-500 text-xs">
+                              {" "}
+                              {address.addressType.slice(0, 1)}
+                              {address.addressType
+                                .slice(1, address.addressType.length)
+                                .toLowerCase()}
+                            </span>
+                          </p>
+
+                          {address.additionalInfo &&
+                            address.additionalInfo.trim().length > 0 && (
+                              <p className="text-sm">
+                                Addiotional Information:
+                                <span className="text-zinc-500 text-xs">
+                                  {" "}
+                                  {address.additionalInfo}
+                                </span>
+                              </p>
+                            )}
+                        </div>
                       </div>
-
-                      <div className="flex flex-col gap-1">
-                        <p className="text-sm">
-                          Phone Number:
-                          <span className="text-zinc-500 text-xs">
-                            {" "}
-                            {address.phoneNumber}
-                          </span>
-                        </p>
-
-                        <p className="text-sm">
-                          Street:
-                          <span className="text-zinc-500 text-xs">
-                            {" "}
-                            {address.street}
-                          </span>
-                        </p>
-                        <p className="text-sm">
-                          N°:
-                          <span className="text-zinc-500 text-xs">
-                            {" "}
-                            {address.houseNumber}
-                          </span>
-                        </p>
-                        {address.apartmentNumber &&
-                          address.apartmentNumber.trim().length > 0 && (
-                            <p className="text-sm">
-                              Apartment N°:
-                              <span className="text-zinc-500 text-xs">
-                                {" "}
-                                {address.apartmentNumber}
-                              </span>
-                            </p>
-                          )}
-                        <p className="text-sm">
-                          Address Type:
-                          <span className="text-zinc-500 text-xs">
-                            {" "}
-                            {address.addressType.slice(0, 1)}
-                            {address.addressType
-                              .slice(1, address.addressType.length)
-                              .toLowerCase()}
-                          </span>
-                        </p>
-
-                        {address.additionalInfo &&
-                          address.additionalInfo.trim().length > 0 && (
-                            <p className="text-sm">
-                              Addiotional Information:
-                              <span className="text-zinc-500 text-xs">
-                                {" "}
-                                {address.additionalInfo}
-                              </span>
-                            </p>
-                          )}
-                      </div>
-                    </div>
-                  </label>
-                ))}
+                    </label>
+                  ))}
+                </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
+
+        {CartItems.length > 0 && (
+          <div className="">
+            <h2 className="text-md font-semibold text-zinc-700 mb-16">
+              Products to checkout
+            </h2>
+            {CartItems.map((item) => (
+              <>
+                <CartItem
+                  key={item.id}
+                  id={item.id}
+                  imageSrc={item.productImage}
+                  productId={item.productId}
+                  productColor={item.colorName}
+                  productSize={item.sizeName}
+                  productQuantity={item.productQuantity}
+                  productTitle={item.product.title}
+                  ProductPrice={item.productPrice}
+                />
+                <hr className="my-4" />
+              </>
+            ))}
+            <div className="w-full">
+              <div className="flex w-full justify-between gap-3">
+                <p className="text-zinc-700 text-sm">Subtotal</p>
+                <p className="text-sm">${subTotal.toFixed(2)}</p>
+              </div>
+              <hr className="my-3" />
+              <div className="flex w-full justify-between gap-3">
+                <p className="text-zinc-700 text-sm">Shipping</p>
+                <p className="text-sm">${shipping.toFixed(2)}</p>
+              </div>
+              <hr className="my-3" />
+              <div className="flex w-full justify-between gap-3">
+                <p className="text-zinc-700 text-sm">Total</p>
+                <p className="text-sm">${(subTotal + shipping).toFixed(2)}</p>
+              </div>
+              <hr className="my-3" />
+            </div>
+          </div>
+        )}
       </div>
     </Container>
   );

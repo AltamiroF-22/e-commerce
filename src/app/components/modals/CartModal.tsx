@@ -10,7 +10,7 @@ import getCartItems from "@/app/actions/getCartItems";
 import { SafeUser } from "@/app/types";
 import { useRouter } from "next/navigation";
 
-interface CartItemsProps {
+export interface CartItemsProps {
   colorId: string;
   colorName: string;
   sizeId: string;

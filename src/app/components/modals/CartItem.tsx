@@ -13,8 +13,8 @@ interface CartItemProps {
   productId: string;
   productQuantity: number;
   ProductPrice: number;
-  remove: (cartId: string) => void;
-  opSelected: (op: number) => void;
+  remove?: (cartId: string) => void;
+  opSelected?: (op: number) => void;
   onQuantityChange?: (productId: string, newQuantity: number) => void;
 }
 
@@ -71,13 +71,15 @@ const CartItem: React.FC<CartItemProps> = ({
           />
         </div>
         <div className="flex flex-col justify-between">
-          <button
-            onClick={() => remove(id)}
-            className="absolute left-1 top-1 transition text-zinc-900 hover:text-rose-600"
-          >
-            <FiMinusCircle />
-            <p className="sr-only">remove</p>
-          </button>
+          {remove && (
+            <button
+              onClick={() => remove(id)}
+              className="absolute left-1 top-1 transition text-zinc-900 hover:text-rose-600"
+            >
+              <FiMinusCircle />
+              <p className="sr-only">remove</p>
+            </button>
+          )}
           <div>
             <h2 className="text-zinc-900 mb-1">
               {productTitle.length > 14
@@ -98,25 +100,38 @@ const CartItem: React.FC<CartItemProps> = ({
           <p className="text-slate-600 text-sm">In stock</p>
         </div>
       </div>
-      <div className="flex flex-col-reverse justify-between h-[30dvw] md:h-[17dvw] xl:h-[10dvw]">
-        <select
-          value={localQuantity}
-          className="border rounded-md p-1 cursor-pointer"
-          onChange={(e) => {
-            setQuantity(Number(e.target.value)),
-              opSelected(Number(e.target.value));
-          }}
-          name={productId}
-          id={productId}
-        >
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((op) => (
-            <option key={op} value={op}>
-              {op}
-            </option>
-          ))}
-        </select>
-        <p className="text-sm">${(localQuantity * ProductPrice).toFixed(2)}</p>
-      </div>
+      {opSelected ? (
+        <div className="flex flex-col-reverse justify-between h-[30dvw] md:h-[17dvw] xl:h-[10dvw]">
+          <select
+            value={localQuantity}
+            className="border rounded-md p-1 cursor-pointer"
+            onChange={(e) => {
+              setQuantity(Number(e.target.value)),
+                opSelected(Number(e.target.value));
+            }}
+            name={productId}
+            id={productId}
+          >
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((op) => (
+              <option key={op} value={op}>
+                {op}
+              </option>
+            ))}
+          </select>
+          <p className="text-sm">
+            ${(localQuantity * ProductPrice).toFixed(2)}
+          </p>
+        </div>
+      ) : (
+        <div className="flex flex-col-reverse justify-between h-[30dvw] md:h-[17dvw] xl:h-[10dvw]">
+          <p className="border rounded-md p-1 text-center cursor-pointer text-sm">
+            {localQuantity}
+          </p>
+          <p className="text-sm">
+            ${(localQuantity * ProductPrice).toFixed(2)}
+          </p>
+        </div>
+      )}
     </div>
   );
 };
