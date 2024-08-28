@@ -147,7 +147,10 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
               </div>
 
               <hr />
-              <div className="flex flex-col cursor-pointer">
+              <div
+                onClick={() => router.push("/")}
+                className="flex flex-col cursor-pointer"
+              >
                 <MenuItem onClick={() => signOut()} label="logout" />
               </div>
             </>

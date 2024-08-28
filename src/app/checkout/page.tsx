@@ -33,6 +33,7 @@ const Checkout = () => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<FieldValues>({
     defaultValues: {
@@ -48,6 +49,8 @@ const Checkout = () => {
       state: "",
     },
   });
+
+
 
   useEffect(() => {
     address();
@@ -71,9 +74,23 @@ const Checkout = () => {
       .then(() => {
         toast.success("Address added");
         address();
+        reset()
       })
       .catch((err) => {
         toast.error("Something went wrong!");
+        console.log(err);
+      });
+  };
+
+  const handleDeleteAddress = async (addressId: string) => {
+    await axios
+      .delete("/api/checkout", { data: { addressId } })
+      .then(() => {
+        toast.success("Address deleted!");
+        setAddresses(addresses.filter((address) => address.id !== addressId));
+      })
+      .catch((err) => {
+        toast.error("Error to delete address");
         console.log(err);
       });
   };
@@ -230,7 +247,7 @@ const Checkout = () => {
                         className="absolute right-1 top-2 hover:text-red-700 transition"
                         onClick={(e) => {
                           e.preventDefault();
-                          alert(`Address to delete: ${address.id}`);
+                          handleDeleteAddress(address.id);
                         }}
                       >
                         <FiTrash2 />

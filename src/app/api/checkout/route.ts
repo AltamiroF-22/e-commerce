@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import prisma from "@/app/libs/prismadb";
+import { error } from "console";
 
 export async function POST(req: Request) {
   const body = await req.json();
@@ -59,5 +60,22 @@ export async function GET(req: Request) {
     return NextResponse.json(addresses);
   } catch (err) {
     console.error("Failed to fetch addresses", err);
+  }
+}
+
+export async function DELETE(req: Request) {
+  const body = await req.json();
+
+  const { addressId } = body;
+
+  try {
+    const addresses = await prisma.address.delete({
+      where: {
+        id: addressId,
+      },
+    });
+    return NextResponse.json(addresses);
+  } catch (err) {
+    console.error("Failed to delete addresses", err);
   }
 }
