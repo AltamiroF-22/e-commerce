@@ -12,6 +12,7 @@ import { FiTrash2 } from "react-icons/fi";
 import { CartItemsProps } from "../components/modals/CartModal";
 import getCartItems from "../actions/getCartItems";
 import CartItem from "../components/modals/CartItem";
+import { SafeUser } from "../types";
 
 interface AddressProps {
   id: string;
@@ -30,7 +31,7 @@ interface AddressProps {
   updatedAt: Date;
 }
 
-const Checkout = () => {
+const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
   const [CartItems, setCartItems] = useState<CartItemsProps[]>([]);
 
   //////////
@@ -112,6 +113,15 @@ const Checkout = () => {
         toast.error("Error to delete address");
         console.log(err);
       });
+  };
+
+  const handleFinishOrder = () => {
+    
+    if (addresses.length === 0)
+      return toast.error("You need at least 1 address!");
+
+    if (subTotal + shipping > currentUser.wallet)
+      return toast.error("Oops, you don't have money enough!");
   };
 
   return (
@@ -401,6 +411,15 @@ const Checkout = () => {
               </div>
               <hr className="my-3" />
             </div>
+
+            <button
+              onClick={() => {
+                handleFinishOrder();
+              }}
+              className="w-full p-4 bg-zinc-950 rounded-md text-white transition hover:bg-zinc-800"
+            >
+              Finish order
+            </button>
           </div>
         )}
       </div>

@@ -91,10 +91,10 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
           )}
 
           {pathname === "/checkout" && (
-            <button className="flex gap-2 items-center justify-center">
+            <button className="flex gap-1 items-center justify-center">
               <p className="sr-only">wallet</p>
               <AiOutlineWallet className="text-zinc-800 text-2xl hover:opacity-85 transition" />
-              <span>${currentUser?.wallet.toFixed(2)}</span>
+              <span>${currentUser?.wallet.toFixed(2) || 0.0}</span>
             </button>
           )}
 
