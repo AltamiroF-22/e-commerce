@@ -58,68 +58,75 @@ model EComerceUser {
 }
 
 model Address {
-  id              String       @id @default(auto()) @map("_id") @db.ObjectId
-  userId          String       @db.ObjectId
-  user            EComerceUser @relation(fields: [userId], references: [id])
+  id     String       @id @default(auto()) @map("_id") @db.ObjectId
+  userId String       @db.ObjectId
+  user   EComerceUser @relation(fields: [userId], references: [id])
 
-  street          String 
-  city            String 
-  state           String 
-  postalCode      String 
-  country         String 
-  phoneNumber     String 
-  houseNumber     String 
-  addressType     AddressType 
-  apartmentNumber String? 
-  additionalInfo  String? 
-  
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
-  orders          Orders[]
+  street          String
+  city            String
+  state           String
+  postalCode      String
+  country         String
+  phoneNumber     String
+  houseNumber     String
+  addressType     AddressType
+  apartmentNumber String?
+  additionalInfo  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders    Orders[]
 
   @@index([userId])
 }
 
 model Cart {
-  id              String       @id @default(auto()) @map("_id") @db.ObjectId
-  userId          String       @db.ObjectId
-  productQuantity Int          @default(1)
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String   @db.ObjectId
+  productQuantity Int      @default(1)
   sizeName        String
-  sizeId          String       @db.ObjectId
+  sizeId          String   @db.ObjectId
   colorName       String
-  colorId         String       @db.ObjectId
-  productId       String       @db.ObjectId
+  colorId         String   @db.ObjectId
+  productId       String   @db.ObjectId
   productImage    String
-  productPrice    Float        @db.Double
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
-  
-  product         Products     @relation(fields: [productId], references: [id])
-  user            EComerceUser @relation(fields: [userId], references: [id])
+  productPrice    Float    @db.Double
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  product Products     @relation(fields: [productId], references: [id])
+  user    EComerceUser @relation(fields: [userId], references: [id])
+
   @@index([userId])
 }
 
 model Orders {
   id                String        @id @default(auto()) @map("_id") @db.ObjectId
   userId            String        @db.ObjectId
-  user              EComerceUser  @relation(fields: [userId], references: [id])
   paymentStatus     PaymentStatus @default(PENDING)
   orderStatus       OrderStatus   @default(PENDING)
   orderDate         DateTime      @default(now())
+
   totalAmount       Float         @db.Double
+  
   shippingAddressId String?       @db.ObjectId
-  shippingAddress   Address?      @relation(fields: [shippingAddressId], references: [id])
   orderItems        OrderItem[]
-  trackingNumber    String?
-  paymentMethod     String?
-  transactionId     String?
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
+
+  orderProductsId String[] @db.ObjectId
+
+  trackingNumber String?
+  paymentMethod  String?
+  transactionId  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  shippingAddress Address?     @relation(fields: [shippingAddressId], references: [id])
+  user            EComerceUser @relation(fields: [userId], references: [id])
+  products        Products     @relation(fields: [orderProductsId], references: [id])
 
   @@index([userId])
 }
-
-
 
 model Products {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -139,6 +146,7 @@ model Products {
   EComerceUser   EComerceUser?    @relation(fields: [eComerceUserId], references: [id])
   eComerceUserId String?          @db.ObjectId
   Cart           Cart[]
+  Orders         Orders[]
 }
 
 model Color {

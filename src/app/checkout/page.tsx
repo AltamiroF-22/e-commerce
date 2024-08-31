@@ -74,7 +74,9 @@ const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
     0
   );
 
+  //"random" shipping
   const shipping = (subTotal / 8) * 0.75;
+  const total = shipping + subTotal;
 
   useEffect(() => {
     if (addresses.length > 0) {
@@ -115,15 +117,30 @@ const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
       });
   };
 
-  const handleFinishOrder = () => {
-    
+  const handleFinishOrder = async () => {
     if (addresses.length === 0)
       return toast.error("You need at least 1 address!");
 
     if (subTotal + shipping > currentUser.wallet)
-      return toast.error("Oops, you don't have money enough!");
-  };
+      return toast.error("todo add more money with stripe!!!");
 
+    const productIds = CartItems.map((item) => item.productId);
+
+    await axios
+      .post("/api/order", {
+        userId: currentUser.id,
+        totalAmount: total,
+        shippingAddressId: selectedAddressId,
+        orderProductsId: productIds, // Incluindo os IDs dos produtos
+      })
+      .then(() => {
+        toast.success("Order made :)");
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Something went wrong!");
+      });
+  };
   return (
     <Container>
       <div className="w-full grid gap-4 md:grid-cols-2 mt-10">
@@ -407,7 +424,7 @@ const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
               <hr className="my-3" />
               <div className="flex w-full justify-between gap-3">
                 <p className="text-zinc-700 text-sm">Total</p>
-                <p className="text-sm">${(subTotal + shipping).toFixed(2)}</p>
+                <p className="text-sm">${total.toFixed(2)}</p>
               </div>
               <hr className="my-3" />
             </div>
