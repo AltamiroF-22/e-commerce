@@ -11,6 +11,7 @@ import { SafeUser } from "./types";
 import ReviewModal from "./product-detail/[id]/components/ReviewModal";
 import CartModal from "./components/modals/CartModal";
 import { CartProvider } from "./context/CartContex";
+import AvatarModal from "./components/modals/AvatarModal";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -41,6 +42,7 @@ export default async function RootLayout({
             <CreateModal />
             <CartModal currentUser={currentUser as SafeUser} />
             <ReviewModal />
+            <AvatarModal currentUser={currentUser as SafeUser} />
           </div>
 
           <div className="pb-28 pt-28">

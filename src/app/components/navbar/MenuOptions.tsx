@@ -10,6 +10,7 @@ import { SafeUser } from "@/app/types";
 import { useRouter } from "next/navigation";
 import UseLoginModal from "@/app/hooks/useLogingModal";
 import UseCreateModal from "@/app/hooks/useCreateModal";
+import UseAvatarModal from "@/app/hooks/useAvatarModal";
 
 interface UserMenuProps {
   currentUser?: SafeUser | null;
@@ -18,6 +19,7 @@ interface UserMenuProps {
 const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
   const loginModal = UseLoginModal();
   const createModal = UseCreateModal();
+  const avatarModalAction = UseAvatarModal();
 
   const router = useRouter();
 
@@ -85,10 +87,10 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
               <div className="flex flex-col cursor-pointer">
                 <MenuItem
                   onClick={() => {
-                    router.push("/edit-profile");
+                    avatarModalAction.onOpen();
                     toggleOpen();
                   }}
-                  label="Edit Profile"
+                  label="Add Avatar"
                 />
               </div>
               <div className="flex flex-col cursor-pointer">
