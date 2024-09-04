@@ -13,6 +13,7 @@ import { CartItemsProps } from "../components/modals/CartModal";
 import getCartItems from "../actions/getCartItems";
 import CartItem from "../components/modals/CartItem";
 import { SafeUser } from "../types";
+import { useRouter } from "next/navigation";
 
 interface AddressProps {
   id: string;
@@ -37,6 +38,10 @@ const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
   //////////
   const [addresses, setAddresses] = useState<AddressProps[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState<string>("");
+  const router = useRouter();
+
+  if (!currentUser) return router.push("/");
+  
   const {
     register,
     handleSubmit,

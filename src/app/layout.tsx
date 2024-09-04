@@ -42,7 +42,7 @@ export default async function RootLayout({
             <CreateModal />
             <CartModal currentUser={currentUser as SafeUser} />
             <ReviewModal />
-            <AvatarModal currentUser={currentUser as SafeUser} />
+            <AvatarModal />
           </div>
 
           <div className="pb-28 pt-28">
