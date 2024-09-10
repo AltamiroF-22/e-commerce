@@ -6,43 +6,43 @@ import { SafeUser } from "../types";
 import UseLoginModal from "./useLogingModal";
 
 interface IUseFavorite {
-  listingId: string;
+  ProductId: string;
   currentUser?: SafeUser | null;
 }
 
-const UseFavorite = ({ listingId, currentUser }: IUseFavorite) => {
+const UseFavorite = ({ ProductId, currentUser }: IUseFavorite) => {
   const router = useRouter();
   const loginModal = UseLoginModal();
 
   const hasFavorited = useMemo(() => {
     const list = currentUser?.favoritesProducts || [];
 
-    return list.includes(listingId);
-  }, [currentUser, listingId]);
+    return list.includes(ProductId);
+  }, [currentUser, ProductId]);
 
   const toggleFavorite = useCallback(
     async (e: React.MouseEvent<HTMLDivElement>) => {
       e.stopPropagation();
 
-      if (!currentUser) return loginModal.onOpen();
+      if (!currentUser) {
+        return loginModal.onOpen();
+      }
 
       try {
-        let request;
-
         if (hasFavorited) {
-          request = () => axios.delete(`/api/favorites/${listingId}`);
+          await axios.delete(`/api/favorites/${ProductId}`);
         } else {
-          request = () => axios.post(`/api/favorites/${listingId}`);
+          await axios.post(`/api/favorites/${ProductId}`);
         }
 
-        await request();
         router.refresh();
         toast.success("Success");
-      } catch (errr) {
+      } catch (error) {
+        console.error(error);
         toast.error("Something went wrong");
       }
     },
-    [currentUser, loginModal, hasFavorited, listingId, router]
+    [currentUser, loginModal, hasFavorited, ProductId, router]
   );
 
   return {

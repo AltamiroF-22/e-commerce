@@ -32,6 +32,21 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
+  const [currentUser, setCurrentUser] = useState<SafeUser | null>(null);
+
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      try {
+        const response = await axios.get("/api/user/currentUser");
+        setCurrentUser(response.data as SafeUser);
+      } catch (error) {
+        console.error("Error fetching current user:", error);
+      }
+    };
+
+    getCurrentUser();
+  }, []);
+
   const fetchProducts = useCallback(async () => {
     if (loading) return;
 
@@ -142,6 +157,7 @@ export default function Home() {
               imageAlt={product.description}
               price={product.price.toFixed(2).toString()}
               id={product.id}
+              currentUser={currentUser as SafeUser}
             />
           ))}
         </div>

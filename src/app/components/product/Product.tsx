@@ -12,6 +12,7 @@ interface ProductCardProps {
   productName: string;
   gender: string;
   price: string;
+  currentUser: SafeUser;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -21,6 +22,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   id,
   price,
   gender,
+  currentUser,
 }) => {
   const router = useRouter();
   return (
@@ -35,8 +37,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
           className=" object-cover h-full w-full group-hover:scale-110 transition"
           fill
         />
-        <div className=" absolute top-3 right-3">
-          {/* <HeartButton listingId={id} currentUser={currentUser as SafeUser} /> */}
+        <div className="absolute top-3 right-3">
+          <HeartButton ProductId={id} currentUser={currentUser as SafeUser} />
         </div>
       </div>
       <div className="mt-4 flex justify-between">
