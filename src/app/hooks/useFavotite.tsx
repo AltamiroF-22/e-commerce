@@ -24,21 +24,21 @@ const UseFavorite = ({ ProductId, currentUser }: IUseFavorite) => {
     async (e: React.MouseEvent<HTMLDivElement>) => {
       e.stopPropagation();
 
-      if (!currentUser) {
-        return loginModal.onOpen();
-      }
+      if (!currentUser) return loginModal.onOpen();
 
       try {
+        let request;
+
         if (hasFavorited) {
-          await axios.delete(`/api/favorites/${ProductId}`);
+          request = () => axios.delete(`/api/favorites/${ProductId}`);
         } else {
-          await axios.post(`/api/favorites/${ProductId}`);
+          request = () => axios.post(`/api/favorites/${ProductId}`);
         }
 
+        await request();
         router.refresh();
         toast.success("Success");
-      } catch (error) {
-        console.error(error);
+      } catch (errr) {
         toast.error("Something went wrong");
       }
     },

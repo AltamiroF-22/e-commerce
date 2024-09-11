@@ -8,9 +8,8 @@ import ProductCard from "./components/product/Product";
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { SafeUser } from "./types";
-import Loader from "./components/Loader";
 
-interface ProductsProps {
+export interface ProductsProps {
   id: string;
   title: string;
   description: string;
