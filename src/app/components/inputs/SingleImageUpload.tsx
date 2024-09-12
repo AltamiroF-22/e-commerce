@@ -34,6 +34,7 @@ const SingleImageUpload: React.FC<SingleImageUploadProps> = ({
         uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
         options={{
           maxFiles: maxfile,
+          resourceType: "image",
         }}
       >
         {({ open }) => {

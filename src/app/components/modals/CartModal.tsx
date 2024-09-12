@@ -78,7 +78,7 @@ const CartModal = ({ currentUser }: { currentUser: SafeUser }) => {
   };
 
   return (
-    <main className=" z-[4] fixed h-[100dvh] w-full bg-zinc-950/40  flex justify-end mt-20">
+    <main className=" z-[4] fixed h-[100dvh] w-full backdrop-blur-sm bg-zinc-950/40 flex justify-end mt-20">
       <div
         style={{ maxHeight: "calc(100dvh - 5em)" }}
         className={`overflow-y-auto overflow-x-hidden`}
