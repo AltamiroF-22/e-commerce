@@ -9,18 +9,7 @@ import { HiOutlineXMark } from "react-icons/hi2";
 const Carousel = ({ images, index }: { images: string[]; index: number }) => {
   const useCarousel = UseCarousel();
   const [currentIndex, setCurrentIndex] = useState(index);
-
-  useEffect(() => {
-    const escCloseCarousel = () => {
-      useCarousel.onClose();
-    };
-
-    document.addEventListener("keydown", escCloseCarousel);
-
-    return () => {
-      document.removeEventListener("keydown", escCloseCarousel);
-    };
-  }, []);
+  const [zoom, setZoom] = useState<boolean>(false);
 
   const handlePrev = () => {
     setCurrentIndex((prevIndex) =>
@@ -38,28 +27,78 @@ const Carousel = ({ images, index }: { images: string[]; index: number }) => {
     useCarousel.onClose();
   };
 
+  const handleToggleZoom = () => {
+    setZoom(!zoom);
+  };
+
+  useEffect(() => {
+    const escCloseCarousel = (event: KeyboardEvent) => {
+      if (event.key === "Escape") useCarousel.onClose();
+      if (event.key === "ArrowRight") handleNext();
+      if (event.key === "ArrowLeft") handlePrev();
+    };
+
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    const handleTouchStart = (event: TouchEvent) => {
+      touchStartX = event.touches[0].clientX;
+    };
+
+    const handleTouchMove = (event: TouchEvent) => {
+      touchEndX = event.touches[0].clientX;
+    };
+
+    const handleTouchEnd = () => {
+      if (touchStartX - touchEndX > 50) {
+        // Swiped left
+        handleNext();
+      } else if (touchEndX - touchStartX > 50) {
+        // Swiped right
+        handlePrev();
+      }
+    };
+
+    document.addEventListener("keydown", escCloseCarousel);
+    document.addEventListener("touchstart", handleTouchStart);
+    document.addEventListener("touchmove", handleTouchMove);
+    document.addEventListener("touchend", handleTouchEnd);
+
+    return () => {
+      document.removeEventListener("keydown", escCloseCarousel);
+      document.removeEventListener("touchstart", handleTouchStart);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [useCarousel, handleNext, handlePrev]);
+
   return (
     <div className="h-[100dvh] w-[100dvw] top-0 bg-white z-30 flex items-center justify-center fixed">
       <button
         onClick={handleCloseCarousel}
-        className="absolute z-50 right-10 top-5 hover:text-zinc-950 transition text-zinc-500"
+        className="absolute z-50 right-2 top-2  xl:right-10 xl:top-5 hover:text-zinc-950 transition text-zinc-500"
       >
         <p className="sr-only">close</p>
-        <HiOutlineXMark className="text-3xl" />
+        <HiOutlineXMark className=" text-xl xl:text-3xl" />
       </button>
-      <div className="flex justify-center items-center h-[45dvh] relative">
+      <div className="flex justify-center items-center h-[90dvh]  xl:h-[45dvh] relative">
         <button
-          className="h-full px-5 hover:translate-x-[-10px] transition  text-zinc-400 hover:text-zinc-950"
+          className="h-full none xl:flex items-center px-5 focus:border-none focus:outline-none hover:translate-x-[-10px] transition  text-zinc-400 hover:text-zinc-950"
           onClick={handlePrev}
         >
           <p className="sr-only">Previus</p>
 
-          <IoIosArrowBack className="text-4xl" />
+          <IoIosArrowBack className="text-xl xl:text-4xl" />
         </button>
 
-        <div className="relative w-[60dvw] h-[40dvw] flex justify-center items-center">
+        <div className="relative w-[90dvw] h-[85dvh] xl:w-[60dvw] xl:h-[40dvw] flex justify-center items-center">
           <Image
-            className="object-center object-cover"
+            onClick={handleToggleZoom}
+            className={`object-center  ${
+              zoom
+                ? "cursor-zoom-out object-cover"
+                : "cursor-zoom-in object-contain"
+            }`}
             src={images[currentIndex]}
             alt={`Image ${currentIndex}`}
             fill
@@ -67,12 +106,12 @@ const Carousel = ({ images, index }: { images: string[]; index: number }) => {
         </div>
 
         <button
-          className="h-full px-5 hover:translate-x-[10px] transition text-zinc-400 hover:text-zinc-950"
+          className="h-full px-5 none xl:flex items-center focus:border-none focus:outline-none hover:translate-x-[10px] transition text-zinc-400 hover:text-zinc-950"
           onClick={handleNext}
         >
           <p className="sr-only">Next</p>
 
-          <IoIosArrowForward className="text-4xl " />
+          <IoIosArrowForward className="text-xl xl:text-4xl " />
         </button>
       </div>
       <p className="w-full text-center absolute bottom-3">
