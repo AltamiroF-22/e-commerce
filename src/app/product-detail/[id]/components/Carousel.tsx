@@ -33,44 +33,57 @@ const Carousel = ({ images, index }: { images: string[]; index: number }) => {
 
   useEffect(() => {
     const escCloseCarousel = (event: KeyboardEvent) => {
-      if (event.key === "Escape") useCarousel.onClose();
+      if (event.key === "Escape") handleCloseCarousel();
       if (event.key === "ArrowRight") handleNext();
       if (event.key === "ArrowLeft") handlePrev();
     };
-
+  
     let touchStartX = 0;
     let touchEndX = 0;
-
+    let touchStartY = 0;
+    let touchEndY = 0;
+  
     const handleTouchStart = (event: TouchEvent) => {
       touchStartX = event.touches[0].clientX;
+      touchStartY = event.touches[0].clientY;
     };
-
+  
     const handleTouchMove = (event: TouchEvent) => {
       touchEndX = event.touches[0].clientX;
+      touchEndY = event.touches[0].clientY;
     };
-
+  
     const handleTouchEnd = () => {
-      if (touchStartX - touchEndX > 50) {
+      const horizontalSwipeThreshold = 50;
+      const verticalSwipeThreshold = 100;
+  
+      if (touchStartX - touchEndX > horizontalSwipeThreshold) {
         // Swiped left
         handleNext();
-      } else if (touchEndX - touchStartX > 50) {
+      } else if (touchEndX - touchStartX > horizontalSwipeThreshold) {
         // Swiped right
         handlePrev();
       }
+  
+      if (touchStartY - touchEndY > verticalSwipeThreshold) {
+        // Swiped up, fecha o carrossel
+        handleCloseCarousel();
+      }
     };
-
+  
     document.addEventListener("keydown", escCloseCarousel);
     document.addEventListener("touchstart", handleTouchStart);
     document.addEventListener("touchmove", handleTouchMove);
     document.addEventListener("touchend", handleTouchEnd);
-
+  
     return () => {
       document.removeEventListener("keydown", escCloseCarousel);
       document.removeEventListener("touchstart", handleTouchStart);
       document.removeEventListener("touchmove", handleTouchMove);
       document.removeEventListener("touchend", handleTouchEnd);
     };
-  }, [useCarousel, handleNext, handlePrev]);
+  }, [useCarousel, handleNext, handlePrev, handleCloseCarousel]);
+  
 
   return (
     <div className="h-[100dvh] w-[100dvw] top-0 bg-white z-30 flex items-center justify-center fixed">
@@ -83,7 +96,7 @@ const Carousel = ({ images, index }: { images: string[]; index: number }) => {
       </button>
       <div className="flex justify-center items-center h-[90dvh]  xl:h-[45dvh] relative">
         <button
-          className="h-full none xl:flex items-center px-5 focus:border-none focus:outline-none hover:translate-x-[-10px] transition  text-zinc-400 hover:text-zinc-950"
+          className="h-full hidden xl:flex items-center px-5 focus:border-none focus:outline-none hover:translate-x-[-10px] transition  text-zinc-400 hover:text-zinc-950"
           onClick={handlePrev}
         >
           <p className="sr-only">Previus</p>
@@ -106,7 +119,7 @@ const Carousel = ({ images, index }: { images: string[]; index: number }) => {
         </div>
 
         <button
-          className="h-full px-5 none xl:flex items-center focus:border-none focus:outline-none hover:translate-x-[10px] transition text-zinc-400 hover:text-zinc-950"
+          className="h-full px-5 hidden xl:flex items-center focus:border-none focus:outline-none hover:translate-x-[10px] transition text-zinc-400 hover:text-zinc-950"
           onClick={handleNext}
         >
           <p className="sr-only">Next</p>

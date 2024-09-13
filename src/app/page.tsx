@@ -8,6 +8,7 @@ import ProductCard from "./components/product/Product";
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { SafeUser } from "./types";
+import { PuffLoader } from "react-spinners";
 
 export interface ProductsProps {
   id: string;
@@ -27,8 +28,9 @@ export default function Home() {
   const [products, setProducts] = useState<ProductsProps[]>([]);
   const [handpicked, setHandpicked] = useState<ProductsProps[]>([]);
 
+  const [loading, setLoading] = useState<boolean>(false);
+
   const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
   const [currentUser, setCurrentUser] = useState<SafeUser | null>(null);
@@ -46,13 +48,28 @@ export default function Home() {
     getCurrentUser();
   }, []);
 
+  const fetchHandpicked = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `/api/products?page=2&limit=4`
+      );
+      setHandpicked(response.data.products);
+    } catch (error) {
+      console.error("Erro ao buscar produtos:", error);
+    }
+  }, [currentPage]);
+
+  useEffect(() => {
+    fetchHandpicked();
+  }, [fetchHandpicked]);
+
   const fetchProducts = useCallback(async () => {
     if (loading) return;
 
     setLoading(true);
     try {
       const response = await axios.get(
-        `/api/products?page=${currentPage}&limit=10`
+        `/api/products?page=${currentPage}&limit=20`
       );
       setProducts((prevProducts) => [
         ...prevProducts,
@@ -67,37 +84,15 @@ export default function Home() {
     }
   }, [currentPage, loading]);
 
-  // TO DO: add a button with plus icon to search for more 10 products
-
-  const fetchHandpicked = useCallback(async () => {
-    try {
-      const response = await axios.get(
-        `/api/products?page=${currentPage}&limit=8`
-      );
-
-      setHandpicked([...response.data.products]);
-    } catch (error) {
-      console.error("Erro ao buscar produtos:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchProducts();
-    fetchHandpicked();
-  }, []);
-
   useEffect(() => {
     const handleScroll = () => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop !==
-          document.documentElement.offsetHeight ||
-        loading ||
-        !hasMore
-      )
-        return;
-      fetchProducts();
+      const isAtBottom =
+        window.innerHeight + window.scrollY >=
+        document.documentElement.offsetHeight - 100;
+
+      if (isAtBottom && !loading && hasMore) {
+        fetchProducts();
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -106,9 +101,9 @@ export default function Home() {
 
   return (
     <>
-      <header className=" flex items-center justify-center relative overflow-hidden w-[100dvw] md:w-[95vw] mx-auto h-[86dvh] bg-opacity-25 bg-black rounded-none  xl:rounded-3xl md:rounded-2xl mb-40">
+      <header className="flex items-center justify-center relative overflow-hidden w-[100dvw] md:w-[95vw] mx-auto h-[86dvh] bg-opacity-25 bg-black rounded-none xl:rounded-3xl md:rounded-2xl mb-40">
         <div className="text-white">
-          <h1 className=" text-center mb-3 text-2xl font-semibold">
+          <h1 className="text-center mb-3 text-2xl font-semibold">
             Discover Your Perfect Outfit
           </h1>
 
@@ -145,7 +140,7 @@ export default function Home() {
       </header>
 
       <Container>
-        <h1 className="text-2xl mb-5 ">Handpicked Selections for You</h1>
+        <h1 className="text-2xl mb-5">Handpicked Selections for You</h1>
         <div className="pt-24 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-40">
           {handpicked.map((product) => (
             <ProductCard
@@ -160,19 +155,26 @@ export default function Home() {
             />
           ))}
         </div>
-        {/* <h1 className="text-2xl mb-5 ">Customers also purchased</h1>
+        <h1 className="text-2xl mb-5">Our Products</h1>
         <div className="pt-24 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-10">
           {products.map((product) => (
             <ProductCard
               key={product.id}
               productName={product.title}
               imageSrc={product.mainImage}
+              gender={product.gender}
               imageAlt={product.description}
               price={product.price.toFixed(2).toString()}
               id={product.id}
+              currentUser={currentUser as SafeUser}
             />
           ))}
-        </div> */}
+        </div>
+        {loading && (
+          <div className="w-full flex items-center justify-center py-6">
+            <PuffLoader size={50} color="gray" />
+          </div>
+        )}
       </Container>
     </>
   );

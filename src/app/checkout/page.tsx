@@ -153,8 +153,8 @@ const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
           <h2 className="text-md font-semibold text-zinc-700 mb-16">
             Add Shipping Address
           </h2>
-          <div className="w-full  gap-2 grid grid-cols-4 gap-y-4">
-            <div className=" col-span-2">
+          <div className="w-full  gap-2 grid md:grid-cols-2 xl:grid-cols-4 gap-y-4">
+            <div className=" xl:col-span-2">
               <Input
                 label="Street Address *"
                 errors={errors}
@@ -181,7 +181,7 @@ const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
               id="apartmentNumber"
             />
 
-            <div className=" col-span-2">
+            <div className=" xl:col-span-2">
               <Input
                 label="Country *"
                 errors={errors}
@@ -192,7 +192,7 @@ const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
               />
             </div>
 
-            <div className="col-span-2">
+            <div className="xl:col-span-2">
               <Input
                 label="State"
                 label2="/Province *"
@@ -203,7 +203,7 @@ const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
                 id="state"
               />
             </div>
-            <div className="col-span-2">
+            <div className="xl:col-span-2">
               <Input
                 label="Postal Code"
                 label2="/CEP *"
@@ -214,7 +214,7 @@ const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
                 id="postalCode"
               />
             </div>
-            <div className="col-span-2">
+            <div className="xl:col-span-2">
               <Input
                 label="City *"
                 errors={errors}
@@ -224,7 +224,7 @@ const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
                 id="city"
               />
             </div>
-            <div className="col-span-3">
+            <div className="xl:col-span-3">
               <Input
                 label="Phone Number *"
                 errors={errors}
@@ -247,7 +247,7 @@ const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
                 errors={errors}
               />
             </div>
-            <div className=" col-span-4">
+            <div className=" xl:col-span-4">
               <Input
                 label="Additional Info"
                 label2="(optional)"
@@ -259,7 +259,7 @@ const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
             <button //TODO: add disable
               onClick={handleSubmit(onSubmit)}
               type="submit"
-              className="col-span-4 p-4 bg-zinc-950 rounded-md text-white transition hover:bg-zinc-800"
+              className=" md:col-span-2 xl:col-span-4 p-4 bg-zinc-950 rounded-md text-white transition hover:bg-zinc-800"
             >
               Add address
             </button>
@@ -396,7 +396,7 @@ const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
         </div>
 
         {CartItems.length > 0 && (
-          <div className="">
+          <div className="px-4 md:px-0">
             <h2 className="text-md font-semibold text-zinc-700 mb-16">
               Products to checkout
             </h2>

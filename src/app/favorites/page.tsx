@@ -25,8 +25,8 @@ const Favorite = ({
 
   return (
     <Container>
-      <h1 className="text-xl text-zinc-800 font-thin mb-10">{"Favorites"}</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-40">
+      <h1 className="text-zinc-800 translate-y-[-20px]">Favorites</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {favoritesProducts.map((product) => (
           <ProductCard
             key={product.id}
