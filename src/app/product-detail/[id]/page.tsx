@@ -15,6 +15,7 @@ import toast from "react-hot-toast";
 import { SafeUser } from "@/app/types";
 import UseCarousel from "@/app/hooks/useCarousel";
 import Carousel from "./components/Carousel";
+import SetBodyHiddenInPopUps from "@/app/utils/SetBodyHiddenInPopUps";
 
 interface ProductDetail {
   id: string;
@@ -50,7 +51,6 @@ const ProductDetails = ({ currentUser }: { currentUser: SafeUser }) => {
   const reviewModal = useReviewModal();
 
   const useCarousel = UseCarousel();
-  0;
   const [carouselIndex, setCarouselIndex] = useState<number>(0);
 
   const [selectedColor, setSelectedColor] = useState<string>("");
@@ -65,6 +65,10 @@ const ProductDetails = ({ currentUser }: { currentUser: SafeUser }) => {
     useState<[{ sizeId: string; sizeName: string }]>();
 
   const { handleSubmit } = useForm();
+
+  useEffect(() => {
+    SetBodyHiddenInPopUps(useCarousel.isOpen);
+  }, [useCarousel.isOpen]);
 
   const handleColorSelection = (
     colorId: string | undefined,

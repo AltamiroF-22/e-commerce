@@ -8,7 +8,8 @@ import { toast } from "react-hot-toast";
 
 import UseCreateModal from "@/app/hooks/useCreateModal";
 import UseLoginModal from "@/app/hooks/useLogingModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import SetBodyHiddenInPopUps from "@/app/utils/SetBodyHiddenInPopUps";
 
 const CreateModal = () => {
   const createModal = UseCreateModal();
@@ -26,6 +27,10 @@ const CreateModal = () => {
       password: "",
     },
   });
+
+  useEffect(() => {
+    SetBodyHiddenInPopUps(createModal.isOpen);
+  }, [createModal.isOpen]);
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     setIsLoading(true);

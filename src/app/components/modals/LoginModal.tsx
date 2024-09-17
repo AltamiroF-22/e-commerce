@@ -7,7 +7,8 @@ import Modal from "./Modal";
 import { signIn } from "next-auth/react";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import SetBodyHiddenInPopUps from "@/app/utils/SetBodyHiddenInPopUps";
 
 const LoginModal = () => {
   const loginModal = UseLoginModal();
@@ -25,6 +26,10 @@ const LoginModal = () => {
       password: "",
     },
   });
+
+  useEffect(() => {
+    SetBodyHiddenInPopUps(loginModal.isOpen);
+  }, [loginModal.isOpen]);
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     setIsLoading(true);

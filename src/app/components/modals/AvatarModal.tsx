@@ -8,6 +8,8 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useEffect } from "react";
+import SetBodyHiddenInPopUps from "@/app/utils/SetBodyHiddenInPopUps";
 
 const AvatarModal = () => {
   const avatarModalAction = UseAvatarModal();
@@ -28,6 +30,10 @@ const AvatarModal = () => {
       shouldTouch: true,
     });
   };
+
+  useEffect(() => {
+    SetBodyHiddenInPopUps(avatarModalAction.isOpen);
+  }, [avatarModalAction.isOpen]);
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     axios

@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import getCartItems from "@/app/actions/getCartItems";
 import { SafeUser } from "@/app/types";
 import { useRouter } from "next/navigation";
+import SetBodyHiddenInPopUps from "@/app/utils/SetBodyHiddenInPopUps";
 
 export interface CartItemsProps {
   colorId: string;
@@ -34,6 +35,10 @@ const CartModal = ({ currentUser }: { currentUser: SafeUser }) => {
   const [CartItems, setCartItems] = useState<CartItemsProps[]>([]);
   const [opSelected, setOpSelected] = useState<number | null>(0);
   const router = useRouter();
+
+  useEffect(() => {
+    SetBodyHiddenInPopUps(cartComponent.isOpen);
+  }, [cartComponent.isOpen]);
 
   useEffect(() => {
     if (!currentUser) return;
