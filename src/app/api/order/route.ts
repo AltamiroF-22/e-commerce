@@ -11,6 +11,7 @@ export async function POST(req: Request) {
   }
 
   const { totalAmount, shippingAddressId, orderProductsId } = body;
+  //fazer que nem fez para pegar os favoritos 
 
   try {
     const order = await prisma.orders.create({

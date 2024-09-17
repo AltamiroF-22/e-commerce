@@ -3,8 +3,9 @@
 import TextArea from "@/app/components/inputs/TextArea";
 import Modal from "@/app/components/modals/Modal";
 import useReviewModal from "@/app/hooks/useReviewModal";
+import SetBodyHiddenInPopUps from "@/app/utils/SetBodyHiddenInPopUps";
 import { StarIcon } from "@heroicons/react/24/solid";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
 const ReviewModal = () => {
@@ -12,6 +13,10 @@ const ReviewModal = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [rating, setRating] = useState<number>(3);
+
+  useEffect(() => {
+    SetBodyHiddenInPopUps(reviewModal.isOpen);
+  }, [reviewModal.isOpen]);
 
   const {
     register,

@@ -14,6 +14,7 @@ import getCartItems from "../actions/getCartItems";
 import CartItem from "../components/modals/CartItem";
 import { SafeUser } from "../types";
 import { useRouter } from "next/navigation";
+import { PuffLoader } from "react-spinners";
 
 interface AddressProps {
   id: string;
@@ -41,7 +42,7 @@ const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
   const router = useRouter();
 
   if (!currentUser) return router.push("/");
-  
+
   const {
     register,
     handleSubmit,
@@ -395,6 +396,11 @@ const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
           )}
         </div>
 
+        {CartItems.length === 0 && (
+          <div className="flex items-center justify-center w-full h-full">
+            <PuffLoader size={50} color="gray" />
+          </div>
+        )}
         {CartItems.length > 0 && (
           <div className="px-4 md:px-0">
             <h2 className="text-md font-semibold text-zinc-700 mb-16">
