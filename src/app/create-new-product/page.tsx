@@ -31,7 +31,7 @@ const CreateProduct: React.FC<CreateProductProps> = ({ currentUser }) => {
     defaultValues: {
       title: "",
       description: "",
-      price: '',
+      price: "",
       imageSrc: "",
       imagesSrc: [],
       genderSelect: "UNISEX",

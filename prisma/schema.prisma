@@ -94,7 +94,7 @@ model Cart {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  product Products     @relation(fields: [productId], references: [id])
+  product Products     @relation(fields: [productId], references: [id], onDelete: Cascade)
   user    EComerceUser @relation(fields: [userId], references: [id])
 
   @@index([userId])
@@ -123,7 +123,7 @@ model Orders {
 
   shippingAddress Address?     @relation(fields: [shippingAddressId], references: [id])
   user            EComerceUser @relation(fields: [userId], references: [id])
-  products        Products     @relation(fields: [orderProductsId], references: [id])
+  products        Products     @relation(fields: [orderProductsId], references: [id],onDelete: Cascade)
 
   @@index([userId])
 }
@@ -172,9 +172,9 @@ model ProductVariant {
   colorId   String @db.ObjectId
   sizeId    String @db.ObjectId
 
-  product Products @relation(fields: [productId], references: [id])
-  color   Color    @relation(fields: [colorId], references: [id])
-  size    Size     @relation(fields: [sizeId], references: [id])
+  product Products @relation(fields: [productId], references: [id] ,onDelete: Cascade)
+  color   Color    @relation(fields: [colorId], references: [id] ,onDelete: Cascade)
+  size    Size     @relation(fields: [sizeId], references: [id],onDelete: Cascade)
 
   // Indexes
   @@index([productId, colorId, sizeId], name: "product_variant_index")

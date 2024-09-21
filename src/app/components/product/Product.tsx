@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import HeartButton from "../HeartButton";
 import { SafeUser } from "@/app/types";
+import { FiMinusCircle } from "react-icons/fi";
 
 interface ProductCardProps {
   imageAlt: string;
@@ -12,6 +13,8 @@ interface ProductCardProps {
   productName: string;
   gender: string;
   price: string;
+  deleteIcon?: () => void;
+  noRouterPush?: boolean;
   currentUser: SafeUser;
 }
 
@@ -23,12 +26,19 @@ const ProductCard: React.FC<ProductCardProps> = ({
   price,
   gender,
   currentUser,
+  deleteIcon,
+
+  noRouterPush,
 }) => {
   const router = useRouter();
   return (
     <div
-      onClick={() => router.push(`/product-detail/${id}`)}
-      className="hover:opacity-80 transition cursor-pointer mb-5"
+      onClick={() =>
+        noRouterPush ? null : router.push(`/product-detail/${id}`)
+      }
+      className={`${
+        !noRouterPush && "hover:opacity-80 transition cursor-pointer"
+      } mb-5`}
     >
       <div className="aspect-square bg-contain w-full relative overflow-hidden rounded-xl ">
         <Image
@@ -38,7 +48,21 @@ const ProductCard: React.FC<ProductCardProps> = ({
           fill
         />
         <div className="absolute top-3 right-3">
-          <HeartButton ProductId={id} currentUser={currentUser as SafeUser} />
+          {deleteIcon ? (
+            <div className="relative cursor-pointer" onClick={deleteIcon}>
+              <FiMinusCircle
+                size={22}
+                className="text-zinc-95 transition hover:text-red-700 absolute -top-[2px] -right-[2px]"
+              />
+            </div>
+          ) : (
+            <>
+              <HeartButton
+                ProductId={id}
+                currentUser={currentUser as SafeUser}
+              />
+            </>
+          )}
         </div>
       </div>
       <div className="mt-4 flex justify-between">
