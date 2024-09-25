@@ -130,14 +130,23 @@ const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
     if (subTotal + shipping > currentUser.wallet)
       return toast.error("todo add more money with stripe!!!");
 
-    const productIds = CartItems.map((item) => item.productId);
+    const products = CartItems.map((item) => ({
+      productId: item.productId,
+      sizeName: item.sizeName,
+      colorName: item.colorName,
+      productImage: item.productImage,
+      productTitle: item.product.title,
+      productCategory: item.product.category,
+    }));
+
+    console.log(products);
 
     await axios
       .post("/api/order", {
         userId: currentUser.id,
         totalAmount: total,
         shippingAddressId: selectedAddressId,
-        orderProductsId: productIds, // Incluindo os IDs dos produtos
+        orderProducts: products, // Incluindo os IDs dos produtos
       })
       .then(() => {
         toast.success("Order made :)");
@@ -147,6 +156,7 @@ const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
         toast.error("Something went wrong!");
       });
   };
+
   return (
     <Container>
       <div className="w-full grid gap-4 md:grid-cols-2 mt-10">

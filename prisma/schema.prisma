@@ -112,7 +112,7 @@ model Orders {
   shippingAddressId String?       @db.ObjectId
   orderItems        OrderItem[]
 
-  orderProductsId String[] @db.ObjectId
+  orderProducts     OrderProducts[] // Relação de 1 para N com OrderProducts
 
   trackingNumber String?
   paymentMethod  String?
@@ -123,9 +123,24 @@ model Orders {
 
   shippingAddress Address?     @relation(fields: [shippingAddressId], references: [id])
   user            EComerceUser @relation(fields: [userId], references: [id])
-  products        Products     @relation(fields: [orderProductsId], references: [id],onDelete: Cascade)
+
 
   @@index([userId])
+}
+
+model OrderProducts {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  sizeName String
+  colorName String
+  productImage String
+  productTitle String
+  productCategory String?
+
+  orderId         String  @db.ObjectId // Chave estrangeira que aponta para o pedido
+  order           Orders  @relation(fields: [orderId], references: [id], onDelete: Cascade) // Relacionamento com Orders
+
+  // Indexes
+  @@index([orderId])
 }
 
 model Products {
@@ -146,7 +161,6 @@ model Products {
   EComerceUser   EComerceUser?    @relation(fields: [eComerceUserId], references: [id])
   eComerceUserId String?          @db.ObjectId
   Cart           Cart[]
-  Orders         Orders[]
 }
 
 model Color {
@@ -163,6 +177,7 @@ model Size {
   variants ProductVariant[]
 }
 
+//ao fazer checkout passar o ID da variente ou ao add o produto ao carrinho! importtante rever!!!
 model ProductVariant {
   id        String      @id @default(auto()) @map("_id") @db.ObjectId
   OrderItem OrderItem[]
