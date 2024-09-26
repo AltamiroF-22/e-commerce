@@ -134,9 +134,12 @@ const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
       productId: item.productId,
       sizeName: item.sizeName,
       colorName: item.colorName,
+      sizeId: item.sizeId,
+      colorId: item.colorId,
       productImage: item.productImage,
       productTitle: item.product.title,
       productCategory: item.product.category,
+      productQuantity: item.productQuantity,
     }));
 
     console.log(products);
@@ -146,7 +149,7 @@ const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
         userId: currentUser.id,
         totalAmount: total,
         shippingAddressId: selectedAddressId,
-        orderProducts: products, // Incluindo os IDs dos produtos
+        orderProducts: products,
       })
       .then(() => {
         toast.success("Order made :)");
@@ -154,6 +157,9 @@ const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
       .catch((err) => {
         console.log(err);
         toast.error("Something went wrong!");
+      })
+      .finally(() => {
+        router.push("/orders");
       });
   };
 

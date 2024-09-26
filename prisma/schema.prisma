@@ -129,19 +129,24 @@ model Orders {
 }
 
 model OrderProducts {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  sizeName String
-  colorName String
-  productImage String
-  productTitle String
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  sizeName        String
+  colorName       String
+  sizeId          String   @db.ObjectId
+  colorId         String   @db.ObjectId
+  productImage    String
+  productTitle    String
   productCategory String?
+  productQuantity Int?
 
-  orderId         String  @db.ObjectId // Chave estrangeira que aponta para o pedido
-  order           Orders  @relation(fields: [orderId], references: [id], onDelete: Cascade) // Relacionamento com Orders
+  // Relacionamento com Orders
+  orderId String  @db.ObjectId
+  order   Orders  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   // Indexes
   @@index([orderId])
 }
+
 
 model Products {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
