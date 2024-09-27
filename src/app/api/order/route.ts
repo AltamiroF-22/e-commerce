@@ -49,8 +49,6 @@ export async function POST(req: Request) {
       //   }
       // }
 
-      //receber quatidades de cada produto para tirar a quantidade certa
-
       const order = await prisma.orders.create({
         data: {
           userId: currentUser.id,
@@ -62,18 +60,20 @@ export async function POST(req: Request) {
             create: orderProducts.map((product: any) => ({
               sizeName: product.sizeName,
               colorName: product.colorName,
+              productId: product.productId,
               sizeId: product.sizeId,
               colorId: product.colorId,
               productImage: product.productImage,
               productTitle: product.productTitle,
               productCategory: product.productCategory,
+              productPrice: Number(product.productPrice),
               productQuantity: Number(product.productQuantity),
             })),
           },
         },
       });
 
-      // Atualizar o estoque dos produtos
+      //receber quatidades de cada produto para tirar a quantidade certa
       for (const product of orderProducts) {
         await prisma.productVariant.updateMany({
           where: {
@@ -83,7 +83,7 @@ export async function POST(req: Request) {
           },
           data: {
             stock: {
-              decrement: 1,
+              decrement: product.productQuantity,
             },
           },
         });

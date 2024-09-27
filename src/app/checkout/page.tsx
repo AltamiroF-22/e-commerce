@@ -132,6 +132,7 @@ const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
 
     const products = CartItems.map((item) => ({
       productId: item.productId,
+      productPrice: item.productPrice,
       sizeName: item.sizeName,
       colorName: item.colorName,
       sizeId: item.sizeId,

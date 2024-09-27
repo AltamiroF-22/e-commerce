@@ -134,6 +134,8 @@ model OrderProducts {
   colorName       String
   sizeId          String   @db.ObjectId
   colorId         String   @db.ObjectId
+  productId       String   @db.ObjectId
+  productPrice    Float    @db.Double
   productImage    String
   productTitle    String
   productCategory String?
