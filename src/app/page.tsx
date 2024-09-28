@@ -11,6 +11,7 @@ import { SafeUser } from "./types";
 import { PuffLoader } from "react-spinners";
 import { useRouter, useSearchParams } from "next/navigation";
 import getSearchedProducts from "./actions/getSearchedProducts";
+import toast from "react-hot-toast";
 
 export interface ProductsProps {
   id: string;
@@ -37,10 +38,8 @@ export default function Home() {
 
   const [currentUser, setCurrentUser] = useState<SafeUser | null>(null);
 
-  const router = useRouter();
-  const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchedProducts, setSearchedProduts] = useState<ProductsProps[]>([]);
 
   useEffect(() => {
     const getCurrentUser = async () => {
@@ -104,6 +103,27 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [fetchProducts, loading, hasMore]);
 
+  useEffect(() => {
+    searchProducts();
+  }, [searchTerm]);
+
+  const searchProducts = async () => {
+    try {
+      const response = await axios.get(
+        `/api/search-product?searchTerm=${searchTerm}`
+      );
+      if (response && response.data) {
+        setSearchedProduts(response.data); 
+        console.log(response.data);
+      } else {
+        throw new Error("Invalid response");
+      }
+    } catch (error) {
+      toast.error("Something went wrong!");
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <header className="flex items-center justify-center relative overflow-hidden w-[100dvw] md:w-[95vw] mx-auto h-[86dvh] bg-opacity-25 bg-black rounded-none xl:rounded-3xl md:rounded-2xl mb-40">
@@ -114,7 +134,7 @@ export default function Home() {
 
           <div className="flex gap-4 items-center bg-white mb-40 rounded-full px-4 overflow-hidden">
             <button
-              onClick={() => {}}
+              onClick={() => console.log(searchTerm)}
               className="flex items-center justify-center hover:opacity-80 transition"
             >
               <AiOutlineSearch className="text-zinc-900 text-2xl md:text-3xl" />
