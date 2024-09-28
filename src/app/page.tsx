@@ -9,6 +9,8 @@ import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { SafeUser } from "./types";
 import { PuffLoader } from "react-spinners";
+import { useRouter, useSearchParams } from "next/navigation";
+import getSearchedProducts from "./actions/getSearchedProducts";
 
 export interface ProductsProps {
   id: string;
@@ -35,6 +37,11 @@ export default function Home() {
 
   const [currentUser, setCurrentUser] = useState<SafeUser | null>(null);
 
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+
   useEffect(() => {
     const getCurrentUser = async () => {
       try {
@@ -50,9 +57,7 @@ export default function Home() {
 
   const fetchHandpicked = useCallback(async () => {
     try {
-      const response = await axios.get(
-        `/api/products?page=2&limit=4`
-      );
+      const response = await axios.get(`/api/products?page=2&limit=4`);
       setHandpicked(response.data.products);
     } catch (error) {
       console.error("Erro ao buscar produtos:", error);
@@ -108,13 +113,19 @@ export default function Home() {
           </h1>
 
           <div className="flex gap-4 items-center bg-white mb-40 rounded-full px-4 overflow-hidden">
-            <button className="flex items-center justify-center hover:opacity-80 transition">
+            <button
+              onClick={() => {}}
+              className="flex items-center justify-center hover:opacity-80 transition"
+            >
               <AiOutlineSearch className="text-zinc-900 text-2xl md:text-3xl" />
             </button>
             <input
               className="w-80 md:w-96 p-4 pl-0 md:pl-4 text-sm text-zinc-950 outline-none"
               type="text"
               placeholder="Find the perfect clothes that match your style."
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+              }}
             />
           </div>
         </div>

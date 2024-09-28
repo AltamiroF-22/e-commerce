@@ -45,7 +45,7 @@ const OrdersPage = () => {
   return (
     <Container>
       <div>
-        <h1 className="mb-8 text-xl font-semibold">Orders</h1>
+        <h1 className="text-md font-semibold text-zinc-700 mb-16">Orders</h1>
 
         {orderProducts.length > 0 ? (
           <div className="">
