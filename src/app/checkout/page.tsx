@@ -12,9 +12,10 @@ import { FiTrash2 } from "react-icons/fi";
 import { CartItemsProps } from "../components/modals/CartModal";
 import getCartItems from "../actions/getCartItems";
 import CartItem from "../components/modals/CartItem";
-// import { SafeUser } from "../types";
+import { SafeUser } from "../types";
 import { useRouter } from "next/navigation";
 import { PuffLoader } from "react-spinners";
+import getCurrentUser from "../actions/getCurrentUser";
 
 interface AddressProps {
   id: string;
@@ -33,8 +34,8 @@ interface AddressProps {
   updatedAt: Date;
 }
 
-const Checkout = ({ currentUser }: { currentUser: any }) => {
-// const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
+const Checkout = () => {
+  const [currentUser, setCurrentUser] = useState<SafeUser | null>(null); // State for currentUser
   const [CartItems, setCartItems] = useState<CartItemsProps[]>([]);
 
   //////////
@@ -43,10 +44,25 @@ const Checkout = ({ currentUser }: { currentUser: any }) => {
   const router = useRouter();
 
   useEffect(() => {
-    if (!currentUser) {
-      router.push("/");
-    }
-  }, [currentUser, router]);
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await axios.get("/api/user/currentUser");
+        const user = response.data; // Accessing the data from the response
+
+        if (!user) {
+          router.push("/");
+        } else {
+          setCurrentUser(user as SafeUser); // Assuming user is SafeUser type
+        }
+      } catch (error) {
+        console.error("Error fetching current user:", error);
+        // Optionally redirect or show an error message
+        router.push("/");
+      }
+    };
+
+    fetchCurrentUser();
+  }, [router]);
 
   const {
     register,
@@ -129,6 +145,8 @@ const Checkout = ({ currentUser }: { currentUser: any }) => {
   };
 
   const handleFinishOrder = async () => {
+    if (!currentUser) return toast.error("User not found!");
+
     if (addresses.length === 0)
       return toast.error("You need at least 1 address!");
 
