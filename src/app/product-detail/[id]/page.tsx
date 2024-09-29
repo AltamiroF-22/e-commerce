@@ -3,7 +3,7 @@
 import Container from "@/app/components/Container";
 import axios from "axios";
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Sizes from "./components/Sizes";
@@ -47,8 +47,31 @@ interface ProductDetail {
   ];
 }
 
-const ProductDetails = ({ currentUser }: { currentUser: SafeUser }) => {
+const ProductDetails = () => {
   const reviewModal = useReviewModal();
+  const [currentUser, setCurrentUser] = useState<SafeUser | null>(null); 
+  const router = useRouter();
+  
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await axios.get("/api/user/currentUser");
+        const user = response.data; // Accessing the data from the response
+
+        if (!user) {
+          router.push("/");
+        } else {
+          setCurrentUser(user as SafeUser); // Assuming user is SafeUser type
+        }
+      } catch (error) {
+        console.error("Error fetching current user:", error);
+        // Optionally redirect or show an error message
+        router.push("/");
+      }
+    };
+
+    fetchCurrentUser();
+  }, [router]);
 
   const useCarousel = UseCarousel();
   const [carouselIndex, setCarouselIndex] = useState<number>(0);
