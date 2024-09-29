@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import Container from "./components/Container";
@@ -105,6 +106,7 @@ export default function Home() {
 
   useEffect(() => {
     searchProducts();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm]);
 
   //fazer um modal quando length de searchedProcts for > 0 e mostrar os produtos
@@ -192,7 +194,7 @@ export default function Home() {
           <small>
             Finding the perfect outfit has never been easier. Our curated
             collection is designed to help you discover clothes that match your
-            unique style. Whether you're searching for casual wear, business
+            unique style. Whether you&apos;re searching for casual wear, business
             attire, or something for a special occasion, we have options that
             cater to all tastes and preferences. Explore our selection and find
             the pieces that make you feel confident and stylish. With our

@@ -41,7 +41,11 @@ const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
   const [selectedAddressId, setSelectedAddressId] = useState<string>("");
   const router = useRouter();
 
-  if (!currentUser) return router.push("/");
+  useEffect(() => {
+    if (!currentUser) {
+      router.push("/");
+    }
+  }, [currentUser, router]);
 
   const {
     register,

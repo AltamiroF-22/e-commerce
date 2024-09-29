@@ -198,7 +198,7 @@ const CreateProduct: React.FC<CreateProductProps> = ({ currentUser }) => {
           <div className="relative grid grid-cols-2 gap-4 mt-2 pl-1">
             {choices.length > 0 &&
               choices.map((value) => (
-                <div className=" justify-self-start">
+                <div key={value.color} className=" justify-self-start">
                   <ColorSizeStock
                     key={value.size}
                     color={value.color}

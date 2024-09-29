@@ -85,7 +85,7 @@ const MyProducts = () => {
           <div className="bg-white rounded-md p-4 border">
             <h1 className=" text-zinc-950 text-xl font-bold">Are you sure?</h1>
             <p className=" text-sm mt-2 text-zinc-700">
-              This action can't be reverted!
+              This action can&apos;t be reverted!
             </p>
             <hr className="my-5" />
 
@@ -146,7 +146,7 @@ const MyProducts = () => {
         >
           <div className="text-center">
             <h1 className="text-zinc-950 font-semibold text-lg">
-              You don't have any products yet!
+              You don&apos;t have any products yet!
             </h1>
             <p>
               Do you want create one?{" "}

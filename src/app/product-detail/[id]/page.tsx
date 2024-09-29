@@ -4,7 +4,7 @@ import Container from "@/app/components/Container";
 import axios from "axios";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Sizes from "./components/Sizes";
 import Colors from "./components/Colors";
@@ -102,6 +102,7 @@ const ProductDetails = ({ currentUser }: { currentUser: SafeUser }) => {
       );
       setSelectedStock(selectedVariant?.stock || 0);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedColor, selectedSize]);
 
   const uniqueColors = Array.from(
@@ -113,18 +114,18 @@ const ProductDetails = ({ currentUser }: { currentUser: SafeUser }) => {
   const params = useParams();
   const id = params?.id;
 
-  const fetchProductDetail = async () => {
+  const fetchProductDetail = useCallback(async () => {
     try {
       const response = await axios.get(`/api/product/${id}`);
       setProductDetail(response.data);
     } catch (error) {
       console.error("Error fetching product details:", error);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     fetchProductDetail();
-  }, []);
+  }, [fetchProductDetail]);
 
   if (!productDetail) return null;
 

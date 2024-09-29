@@ -17,7 +17,7 @@ const Favorite = ({
         className="flex items-center justify-center"
       >
         <p className="text-center text-zinc-600">
-          You don't have any favorite products yet.
+          You don&apos;t have any favorite products yet.
         </p>
       </div>
     );

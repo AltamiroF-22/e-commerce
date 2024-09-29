@@ -109,7 +109,7 @@ const CartModal = ({ currentUser }: { currentUser: SafeUser }) => {
                 className="flex flex-col items-center justify-center"
               >
                 <p className="text-base text-zinc-900 text-center">
-                  You don't have products in your cart yet
+                  You don&apos;t have products in your cart yet
                 </p>
                 <p
                   className="text-sm cursor-pointer text-zinc-700 transition hover:underline"
