@@ -16,7 +16,7 @@ const TemporaryToBuildingPages = () => {
     <Container>
       <div className="h-full w-full flex items-center flex-col justify-center">
         <h1 className=" font-semibold text-zinc-900">
-          I didn't build this page yet!
+          I didn&apos;t build this page yet!
         </h1>
         <div className="flex items-center gap-2 justify-center">
           <p className="text-zinc-600">Continue exploring...</p>
