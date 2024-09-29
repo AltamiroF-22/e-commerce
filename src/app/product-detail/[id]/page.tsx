@@ -84,8 +84,7 @@ const ProductDetails = () => {
   const [productDetail, setProductDetail] = useState<ProductDetail | null>(
     null
   );
-  const [availableSizes, setAvailableSizes] =
-    useState<[{ sizeId: string; sizeName: string }]>();
+  const [availableSizes, setAvailableSizes] = useState<{ sizeId: string; sizeName: string }[] | undefined>(undefined);
 
   const { handleSubmit } = useForm();
 
