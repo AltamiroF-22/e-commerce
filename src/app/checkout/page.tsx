@@ -12,7 +12,7 @@ import { FiTrash2 } from "react-icons/fi";
 import { CartItemsProps } from "../components/modals/CartModal";
 import getCartItems from "../actions/getCartItems";
 import CartItem from "../components/modals/CartItem";
-import { SafeUser } from "../types";
+// import { SafeUser } from "../types";
 import { useRouter } from "next/navigation";
 import { PuffLoader } from "react-spinners";
 
@@ -33,7 +33,8 @@ interface AddressProps {
   updatedAt: Date;
 }
 
-const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
+const Checkout = ({ currentUser }: { currentUser: any }) => {
+// const Checkout = ({ currentUser }: { currentUser: SafeUser }) => {
   const [CartItems, setCartItems] = useState<CartItemsProps[]>([]);
 
   //////////

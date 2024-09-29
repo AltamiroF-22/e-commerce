@@ -1,5 +1,5 @@
 import getCurrentUser from "../actions/getCurrentUser";
-import { SafeUser } from "../types";
+// import { SafeUser } from "../types";
 import Checkout from "./page";
 
 export default async function RootLayout({}) {
@@ -7,7 +7,7 @@ export default async function RootLayout({}) {
 
   return (
     <div className="">
-      <Checkout currentUser={currentUser as SafeUser} />
+      <Checkout currentUser={currentUser as any} />
     </div>
   );
 }
