@@ -10,17 +10,38 @@ import SingleImageUpload from "../components/inputs/SingleImageUpload";
 import TextArea from "../components/inputs/TextArea";
 import Select from "../components/inputs/GenderSelect";
 import ColorSizeStock from "../components/ColorSizeStock";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { ChromePicker } from "react-color";
 import toast from "react-hot-toast";
 import { SafeUser } from "../types";
+import { useRouter } from "next/navigation";
 
-interface CreateProductProps {
-  currentUser: SafeUser;
-}
+const CreateProduct = () => {
+  const [currentUser, setCurrentUser] = useState<SafeUser | null>(null); 
+  const router = useRouter();
+  
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await axios.get("/api/user/currentUser");
+        const user = response.data; // Accessing the data from the response
 
-const CreateProduct: React.FC<CreateProductProps> = ({ currentUser }) => {
+        if (!user) {
+          router.push("/");
+        } else {
+          setCurrentUser(user as SafeUser); // Assuming user is SafeUser type
+        }
+      } catch (error) {
+        console.error("Error fetching current user:", error);
+        // Optionally redirect or show an error message
+        router.push("/");
+      }
+    };
+
+    fetchCurrentUser();
+  }, [router]);
+
   const {
     register,
     handleSubmit,

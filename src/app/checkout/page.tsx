@@ -35,7 +35,7 @@ interface AddressProps {
 }
 
 const Checkout = () => {
-  const [currentUser, setCurrentUser] = useState<SafeUser | null>(null); // State for currentUser
+  const [currentUser, setCurrentUser] = useState<SafeUser | null>(null); 
   const [CartItems, setCartItems] = useState<CartItemsProps[]>([]);
 
   //////////
