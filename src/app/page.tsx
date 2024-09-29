@@ -107,13 +107,14 @@ export default function Home() {
     searchProducts();
   }, [searchTerm]);
 
+  //fazer um modal quando length de searchedProcts for > 0 e mostrar os produtos
   const searchProducts = async () => {
     try {
       const response = await axios.get(
         `/api/search-product?searchTerm=${searchTerm}`
       );
       if (response && response.data) {
-        setSearchedProduts(response.data); 
+        setSearchedProduts(response.data);
         console.log(response.data);
       } else {
         throw new Error("Invalid response");
@@ -132,7 +133,11 @@ export default function Home() {
             Discover Your Perfect Outfit
           </h1>
 
-          <div className="flex gap-4 items-center bg-white mb-40 rounded-full px-4 overflow-hidden">
+          <div
+            className={`flex gap-4 items-center bg-white mb-40 rounded-full px-4 overflow-hidden transition-transform duration-500 ease-in-out ${
+              searchTerm.length > 0 ? "-translate-y-[20dvh]" : ""
+            }`}
+          >
             <button
               onClick={() => console.log(searchTerm)}
               className="flex items-center justify-center hover:opacity-80 transition"
@@ -147,6 +152,39 @@ export default function Home() {
                 setSearchTerm(e.target.value);
               }}
             />
+          </div>
+
+          <div
+            className={`h-[60dvh] z-[2] w-[100dvw] md:w-[95vw] left-1/2 overflow-y-auto -translate-x-1/2 bottom-0 absolute transition-transform duration-500 ease-in-out transform ${
+              searchTerm.length > 0 ? "translate-y-0" : "translate-y-full"
+            } bg-white border rounded-none xl:rounded-3xl md:rounded-2xl`}
+          >
+            {searchedProducts.length > 0 && (
+              <>
+                <div className="h-8 sticky top-0 bg-white z-[2]"></div>
+                <div className=" px-10 py-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-40">
+                  {searchedProducts.map((product) => (
+                    <ProductCard
+                      key={product.id}
+                      productName={product.title}
+                      imageSrc={product.mainImage}
+                      gender={product.gender}
+                      imageAlt={product.description}
+                      price={product.price.toFixed(2).toString()}
+                      id={product.id}
+                      currentUser={currentUser as SafeUser}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+
+            {searchedProducts.length === 0 && (
+              <div className="w-full h-full flex items-center flex-col gap-1 justify-center">
+                <h3 className=" text-zinc-800 text-lg font-semibold">No results</h3>
+                <small className="text-zinc-600 text-sm">Try something different</small>
+              </div>
+            )}
           </div>
         </div>
 
