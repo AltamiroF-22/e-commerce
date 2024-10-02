@@ -3,7 +3,7 @@
 import TemporaryToBuildingPages from "../components/TemporaryToBuildingPages";
 
 const app = () => {
-  return <TemporaryToBuildingPages />;
+  return  <TemporaryToBuildingPages />;
 };
 
 export default app;
